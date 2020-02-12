@@ -20,12 +20,13 @@ import SimBlock.node.Node;
 import static SimBlock.simulator.Timer.*;
 import static SimBlock.simulator.Simulator.*;
 import static SimBlock.simulator.Main.*;
+import static SimBlock.settings.SimulationConfiguration.*;
 
 public class MiningTask implements Task {
 	private Node miningNode;
 	private Block parentBlock;
 	private long interval;
-	
+
 	public MiningTask(Node miningNode) {
 		this.miningNode = miningNode;
 		this.parentBlock = miningNode.getBlock();
@@ -44,6 +45,105 @@ public class MiningTask implements Task {
 	public void run() {
 		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode ,getCurrentTime());
 		this.miningNode.receiveBlock(createdBlock);
+
+
+		if(SIMULATION_TYPE.equals("bitcoin"))
+		{
+			if(DIFFICULTY_INTERVAL != 0)
+			{
+				if((this.parentBlock.getHeight()+1) % DIFFICULTY_INTERVAL == 0)
+				{
+					setBitcoinAverageDifficulty();
+				}
+			}
+		}
+		else if (SIMULATION_TYPE.equals("litecoin"))
+		{
+			if(DIFFICULTY_INTERVAL != 0 )
+			{
+				if((this.parentBlock.getHeight()+1) % DIFFICULTY_INTERVAL == 0)
+				{
+					setBitcoinAverageDifficulty();
+				}
+			}
+
+		}
+		else if (SIMULATION_TYPE.equals("dogecoin"))
+		{
+			if((this.parentBlock.getHeight()) >= 2 )
+			{
+				setDogecoinAverageDifficulty();
+			}
+		}
+		else
+		{
+			System.out.println("Incorrect SIMULATION_TYPE. Please try again.");
+		}
+
+
+		if(CHANGE_MINING_POWER_INTERVAL != 0 )
+		{
+			if((this.parentBlock.getHeight()+1) % CHANGE_MINING_POWER_INTERVAL == 0) //allow user to set when to change the mining power
+			{
+				for (Node node : getSimulatedNodes()) {
+					//System.out.println("Old mining power = " + node.getMiningPower());
+					node.setMiningPower(randomMiningPower(node.getMiningPower()));
+					//System.out.println("New mining power = " + node.getMiningPower());
+					//System.out.println();
+				}
+				//System.out.println("Increase hash rate");
+			}
+		}
+
+		if(this.parentBlock.getHeight()+1 == 1500)
+		{
+			AVERAGE_MINING_POWER = 659148;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+			}
+		}
+		else if(this.parentBlock.getHeight()+1 == 3000)
+		{
+			AVERAGE_MINING_POWER = 739229;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+
+			}
+		}
+		else if(this.parentBlock.getHeight()+1 == 4500)
+		{
+			AVERAGE_MINING_POWER = 883284;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+			}
+		}
+		else if(this.parentBlock.getHeight()+1 == 6000)
+		{
+			AVERAGE_MINING_POWER = 951183;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+			}
+		}
+		else if(this.parentBlock.getHeight()+1 == 7500)
+		{
+			AVERAGE_MINING_POWER = 891134;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+			}
+		}
+		else if(this.parentBlock.getHeight()+1 == 9000)
+		{
+			AVERAGE_MINING_POWER = 933661;
+			for (Node node : getSimulatedNodes())
+			{
+				node.setMiningPower(genMiningPower());
+			}
+		}
 	}
 
 	public Block getParent(){

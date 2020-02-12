@@ -64,6 +64,7 @@ public class Node {
 	public int getNodeID(){ return this.nodeID; }
 	public Block getBlock(){ return this.block; }
 	public long getMiningPower(){ return this.miningPower; }
+	public void setMiningPower(long miningPower) { this.miningPower = miningPower;}
 	public Set<Block> getOrphans(){ return this.orphans; }
 	public void setRegion(int region){ this.region = region; }
 	public int getRegion(){ return this.region; }

@@ -42,7 +42,10 @@ import SimBlock.task.MiningTask;
 public class Main {
 	public static Random random = new Random(10);
 	public static long time1 = 0;//a value to know the simation time.
-
+	public static long meanblockpropagationTime = 0;
+	public static long totalMedian = 0;
+	public static long midPropagationTime = 0;
+	public static ArrayList <Long> myMedian = new ArrayList<Long>();
 	public static URI CONF_FILE_URI;
 	public static URI OUT_FILE_URI;
 	static {
@@ -105,10 +108,34 @@ public class Main {
 		Set<Block> blocks = new HashSet<Block>();
 		Block block  = getSimulatedNodes().get(0).getBlock();
 
+		int counter1 = 1;
+		long oldInterval = 0;
+		long newInterval = 0;
+		long myInterval = 0;
+		long totalInterval = 0;
 		while(block.getParent() != null){
 			blocks.add(block);
+			oldInterval = block.getTime();
 			block = block.getParent();
+			newInterval = block.getTime();
+
+
+			myInterval = (oldInterval - newInterval)/1000; //convert to second
+			/*
+			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\blockTime.csv", true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw))
+			{
+				//out.println(myInterval);
+
+			} catch (IOException e) {
+				//exception handling left as an exercise for the reader
+			}*/
+			//System.out.println(oldInterval+ " - " + newInterval+ " = " + myInterval);
+			totalInterval=totalInterval+myInterval;
+			counter1 = counter1+1;
 		}
+		//System.out.println("My total average interval = " + (totalInterval/counter1));
 
 		Set<Block> orphans = new HashSet<Block>();
 		int averageOrhansSize =0;
@@ -116,6 +143,7 @@ public class Main {
 			orphans.addAll(node.getOrphans());
 			averageOrhansSize += node.getOrphans().size();
 		}
+		int averageorphanSize = averageOrhansSize;
 		averageOrhansSize = averageOrhansSize/getSimulatedNodes().size();
 
 		blocks.addAll(orphans);
@@ -131,10 +159,13 @@ public class Main {
 			  return order;
 	        }
 	    });
+		int counter = 0;
 		for(Block orphan : orphans){
-			System.out.println(orphan+ ":" +orphan.getHeight());
+			//System.out.println(orphan+ ":" +orphan.getHeight());
+			counter = counter + 1;
 		}
-		System.out.println(averageOrhansSize);
+		System.out.println("Average orphan size (simblock) = " +averageOrhansSize);
+		System.out.println("Number of orphan (mine) = "+counter);
 
 		try {
 			FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./blockList.txt")), false);
@@ -163,8 +194,27 @@ public class Main {
 		OUT_JSON_FILE.close();
 		long end = System.currentTimeMillis();
 		time1 += end -start;
-		System.out.println(time1);
+		System.out.println("Elapsed time (ms) = "+time1);
+		System.out.println("Total block propagation time  = " + (meanblockpropagationTime/1000));
+		Collections.sort(myMedian);
+		int myLength = myMedian.size();
+		totalMedian = (myMedian.get((myLength/2))) + (myMedian.get((myLength/2-1)));
+		totalMedian = totalMedian/2;
+		System.out.println("Median block propagation time: "+((midPropagationTime/ENDBLOCKHEIGHT)/1000));
+		System.out.println("My median: " + (totalMedian/1000));
+		System.out.println("Mean block propagation time: "+((meanblockpropagationTime/ENDBLOCKHEIGHT)/1000));
 
+		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\myData.csv", true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter out = new PrintWriter(bw))
+		{
+			out.println(averageorphanSize + "," + averageOrhansSize + "," + (meanblockpropagationTime/ENDBLOCKHEIGHT) + "," + (midPropagationTime/ENDBLOCKHEIGHT) + "," + totalMedian
+					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval/counter1) );
+
+
+		} catch (IOException e) {
+			//exception handling left as an exercise for the reader
+		}
 	}
 
 
@@ -207,6 +257,16 @@ public class Main {
 
 		return  Math.max((int)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
 	}
+
+	public static long randomMiningPower(long oldMiningPower) {
+		//double r = random.nextGaussian();
+		if ((random.nextGaussian() <= MINING_POWER_INCREASE_PERCENTAGE)) {
+			return Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
+		} else {
+			return Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
+		}
+	}
+
 	public static void constructNetworkWithAllNode(int numNodes){
 		//List<String> regions = new ArrayList<>(Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN", "AUSTRALIA", "OTHER"));
 		double[] regionDistribution = getRegionDistribution();
