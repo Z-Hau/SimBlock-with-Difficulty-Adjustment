@@ -21,6 +21,7 @@ public class Block {
 	private Node creator;
 	private long generatedTime;
 	private int id;
+	private double difficulty;
 	private static int latestId = 0;
 
 
@@ -34,6 +35,7 @@ public class Block {
 	}
 
 	public int getHeight(){return this.height;}
+	public double getDifficulty(){return this.difficulty;}
 	public Block getParent(){return this.parent;}
 	public Node getCreator(){return this.creator;}
 	public long getTime(){return this.generatedTime;}

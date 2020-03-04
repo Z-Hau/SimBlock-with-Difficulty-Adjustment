@@ -17,15 +17,20 @@ package SimBlock.task;
 
 import static SimBlock.simulator.Main.*;
 import static SimBlock.simulator.Network.*;
-import static SimBlock.simulator.Timer.*;
 
 import SimBlock.node.Block;
 import SimBlock.node.Node;
+import SimBlock.simulator.Timer;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 public class BlockMessageTask extends AbstractMessageTask {
 
 	private Block block;
 	private long interval;
+	Timer myTime = new Timer();
 
 	public BlockMessageTask(Node from, Node to, Block block ,long delay) {
 		super(from, to);
@@ -37,14 +42,14 @@ public class BlockMessageTask extends AbstractMessageTask {
 		return this.interval;
 	}
 
-	public void run(){
-		this.getFrom().sendNextBlockMessage();
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap){
+		this.getFrom().sendNextBlockMessage(taskQueue,taskMap);
 		
 		OUT_JSON_FILE.print("{");
 		OUT_JSON_FILE.print(	"\"kind\":\"flow-block\",");
 		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (getCurrentTime() - this.interval) + ",");
-		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + getCurrentTime() + ",");
+		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (myTime.getCurrentTime() - this.interval) + ",");
+		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + myTime.getCurrentTime() + ",");
 		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getFrom().getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"end-node-id\":" + getTo().getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"block-id\":" + block.getId());
@@ -52,7 +57,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		OUT_JSON_FILE.print("},");
 		OUT_JSON_FILE.flush();
 
-		super.run();
+		super.run(simulatedNodes, taskQueue, taskMap);
 	}
 
 	public Block getBlock(){

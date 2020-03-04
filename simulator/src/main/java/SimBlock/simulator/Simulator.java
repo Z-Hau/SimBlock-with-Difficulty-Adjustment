@@ -26,50 +26,82 @@ import static SimBlock.settings.SimulationConfiguration.*;
 
 
 public class Simulator {
-	private static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
+    //private static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
 	private static long targetInterval;// = 1000*60*10;//msec
+	private static long targetIntervalGA;
 	private static double averageDifficulty;
-	
-	public static ArrayList<Node> getSimulatedNodes(){ return simulatedNodes; }
+	private static double averageDifficultyGA;
+	//public Timer myTime = new Timer();
+
+	//public static ArrayList<Node> getSimulatedNodes(){ return simulatedNodes; }
 	public static double getAverageDifficulty(){ return averageDifficulty; }
+	public static double getAverageDifficultyGA(){return averageDifficultyGA;}
+	public static void setTargetIntervalGA(long interval) {targetIntervalGA = interval;}
 	public static void setTargetInterval(long interval){ targetInterval = interval; }
 	
-	public static void addNode(Node node){
+	public static void addNode(Node node, ArrayList<Node> simulatedNodes){
 		simulatedNodes.add(node);
 		//setAverageDifficulty();
-		setInitialDifficulty();
+		setInitialDifficulty(simulatedNodes);
 	}
-	
+
+	/**
 	public static void removeNode(Node node){
 		simulatedNodes.remove(node);
 		//setAverageDifficulty();
-		setInitialDifficulty();
-	}
-	
+		setInitialDifficulty(simulatedNodes);
+	}*/
+
+	/**
 	public static void addNodeWithConnection(Node node){
 		node.joinNetwork();
-		addNode(node);
+		addNode(node, simulatedNodes);
 		for(Node existingNode: simulatedNodes){
 			existingNode.addNeighbor(node);
 		}
 	}
+	 * @param simulatedNodes*/
 
-	public static void setBitcoinAverageDifficulty(){
+	public static void setBitcoinAverageDifficulty(ArrayList<Node> simulatedNodes){
+
+		int myCounter = 0;
+		int counter = 0;
+		long myTargetInterval = 0;
 		long totalMiningPower = 0;
-
 		for(Node node : simulatedNodes){
 			totalMiningPower +=  node.getMiningPower();
 
 		}
 		System.out.println("total mining power = " + totalMiningPower);
-		Block myBlock  = getSimulatedNodes().get(0).getBlock();
+		Block myBlock  = simulatedNodes.get(0).getBlock();
 		double totalInterval = 0;
-		int counter = DIFFICULTY_INTERVAL;
+
+		if(runningGA == false)
+		{
+			 myCounter = DIFFICULTY_INTERVAL;
+			 counter = myCounter;
+			 myTargetInterval = targetInterval;
+		}
+		else
+		{
+			 myCounter = GA_DIFFICULTY_INTERVAL;
+			 counter = myCounter;
+			 myTargetInterval = targetIntervalGA;
+		}
+
 		double minimumDifficulty = 1;
-		double oldDifficulty = getAverageDifficulty();
+		double oldDifficulty = 0;
+		if(runningGA == false)
+		{
+			oldDifficulty = getAverageDifficulty();
+		}
+		else
+		{
+			oldDifficulty = getAverageDifficultyGA();
+		}
 		double lastBlockTime = myBlock.getTime();
 		double nPowTargetTimespan = 0;
-		nPowTargetTimespan	= (INTERVAL/1000) * 2016;
+		nPowTargetTimespan	= (myTargetInterval/1000) * myCounter;
 		for (int i = 1; i < (counter - 1) ; i ++)
 		{
 			myBlock = myBlock.getParent();
@@ -98,24 +130,39 @@ public class Simulator {
 		averageDifficulty = newDifficulty;
 		System.out.println("Updated new difficulty = " + averageDifficulty);
 		System.out.println();
-
 	}
 
-	public static void setDogecoinAverageDifficulty(){
+	public static void setDogecoinAverageDifficulty(ArrayList<Node> simulatedNodes){
 		long totalMiningPower = 0;
+		int myCounter = 0;
+		int counter = 0;
+		long myTargetInterval = 0;
 
 		for(Node node : simulatedNodes){
 			totalMiningPower += node.getMiningPower();
 
 		}
 		System.out.println("total mining power = " + totalMiningPower);
-		Block myBlock  = getSimulatedNodes().get(0).getBlock();
+		Block myBlock  = simulatedNodes.get(0).getBlock();
 		double totalInterval = 0;
+		if(runningGA == false)
+		{
+			myCounter = DIFFICULTY_INTERVAL;
+			counter = myCounter;
+			myTargetInterval = targetInterval;
+		}
+		else
+		{
+			myCounter = GA_DIFFICULTY_INTERVAL;
+			counter = myCounter;
+			myTargetInterval = targetIntervalGA;
+		}
+
 		double oldDifficulty = getAverageDifficulty();
 		double lastBlockTime = myBlock.getTime();
 		double minimumDifficulty = 0.00024414;
 		double nPowTargetTimespan = 0;
-		nPowTargetTimespan	= (INTERVAL/1000);
+		nPowTargetTimespan	= (myTargetInterval/1000);
 		myBlock = myBlock.getParent();
 		totalInterval = (lastBlockTime - (myBlock.getTime()))/1000 ; //convert to sec
 
@@ -140,7 +187,8 @@ public class Simulator {
 		System.out.println();
 
 	}
-	
+
+	/**
 	// calculate averageDifficulty from totalMiningPower
 	private static void setAverageDifficulty(){
 		long totalMiningPower = 0;
@@ -152,24 +200,25 @@ public class Simulator {
 		if(totalMiningPower != 0){
 			averageDifficulty =  totalMiningPower * targetInterval;
 		}
-	}
+	}*/
 
-	private static void setInitialDifficulty(){
+	private static void setInitialDifficulty(ArrayList<Node> simulatedNodes){
 		long totalMiningPower = 0;
 
 		for(Node node : simulatedNodes){
-			totalMiningPower += (long) node.getMiningPower();
+			totalMiningPower += node.getMiningPower();
 
 		}
 		//System.out.println("My total mining power = " +totalMiningPower);
 		if(totalMiningPower != 0){
-			averageDifficulty =  totalMiningPower * targetInterval;
-			//averageDifficulty = 1.0E13;
-
+			if(runningGA == false) {
+				averageDifficulty =  totalMiningPower * targetInterval;
+			}
+			else {
+				averageDifficultyGA = totalMiningPower * targetIntervalGA;
+			}
 		}
 	}
-
-	
 	
 	//
 	// Record block propagation time
@@ -195,7 +244,7 @@ public class Simulator {
 		}
 	}
 	
-	public static void printPropagation(Block block,LinkedHashMap<Integer, Long> propagation){
+	public static void printPropagation(Block block, LinkedHashMap<Integer, Long> propagation){
 		System.out.println(block + ":" + block.getHeight());
 		int printCounter = 0;
 		for(Map.Entry<Integer, Long> timeEntry : propagation.entrySet()){

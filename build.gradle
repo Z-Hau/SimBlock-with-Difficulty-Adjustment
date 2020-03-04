@@ -3,10 +3,13 @@ import org.gradle.plugins.ide.eclipse.model.*
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'java-library'
 
 def srcDir = 'src/main/java'
 def confDir = 'src/dist/conf'
 def outDir = 'build/classes/java/main'
+
 
 subprojects {
     apply plugin: 'java'
@@ -20,6 +23,14 @@ subprojects {
         sourceDirs += file(srcDir)
         outputDir = file(outDir)
         inheritOutputDirs = false
+        repositories {
+            mavenCentral()
+        }
+        dependencies{
+            implementation files ('libs/jmetal-algorithm-5.9-jar-with-dependencies.jar')
+        }
+
+
         iml {
             whenMerged  { module ->
                 module.getDependencies().add(new ModuleLibrary([new Path('file://$MODULE_DIR$/'+confDir)] as Set, [] as Set, [] as Set, [] as Set, null))

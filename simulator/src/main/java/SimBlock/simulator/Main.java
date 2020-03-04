@@ -27,17 +27,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+
 
 import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.task.MiningTask;
+
+import SimBlock.task.Task;
+
 
 public class Main {
 	public static Random random = new Random(10);
@@ -48,6 +46,13 @@ public class Main {
 	public static ArrayList <Long> myMedian = new ArrayList<Long>();
 	public static URI CONF_FILE_URI;
 	public static URI OUT_FILE_URI;
+
+
+
+	public static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
+	public static PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
+	public static Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
+
 	static {
 		try {
 			CONF_FILE_URI = ClassLoader.getSystemResource("simulator.conf").toURI();
@@ -59,6 +64,7 @@ public class Main {
 
 	public static PrintWriter OUT_JSON_FILE;
 	public static PrintWriter STATIC_JSON_FILE;
+
 	static {
 		try{
 			OUT_JSON_FILE = new PrintWriter(new BufferedWriter(new FileWriter(new File(OUT_FILE_URI.resolve("./output.json")))));
@@ -73,41 +79,37 @@ public class Main {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
+
 	}
 
-	public static void main(String[] args){
+	public static void main(String[] args)  {
+
+
 		long start = System.currentTimeMillis();
 		setTargetInterval(INTERVAL);
-
 		OUT_JSON_FILE.print("["); //start json format
 		OUT_JSON_FILE.flush();
 
 		printRegion();
-
-		constructNetworkWithAllNode(NUM_OF_NODES);
-
-		getSimulatedNodes().get(0).genesisBlock();
+		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodes);
+		simulatedNodes.get(0).genesisBlock(simulatedNodes,taskQueueGlobal,taskMapGlobal);
 
 		int j=1;
-		while(getTask() != null){
-
-			if(getTask() instanceof MiningTask){
-				MiningTask task = (MiningTask) getTask();
+		while(getTask(simulatedNodes,taskQueueGlobal,taskMapGlobal) != null){
+			if(getTask(simulatedNodes, taskQueueGlobal, taskMapGlobal) instanceof MiningTask){
+				MiningTask task = (MiningTask) getTask(simulatedNodes, taskQueueGlobal, taskMapGlobal);
 				if(task.getParent().getHeight() == j) j++;
 				if(j > ENDBLOCKHEIGHT){break;}
 				if(j%100==0 || j==2) writeGraph(j);
 			}
-			runTask();
+			runTask(simulatedNodes,taskQueueGlobal,taskMapGlobal);
 		}
 
-
 		printAllPropagation();
-
 		System.out.println();
 
 		Set<Block> blocks = new HashSet<Block>();
-		Block block  = getSimulatedNodes().get(0).getBlock();
-
+		Block block  = simulatedNodes.get(0).getBlock();
 		int counter1 = 1;
 		long oldInterval = 0;
 		long newInterval = 0;
@@ -118,8 +120,6 @@ public class Main {
 			oldInterval = block.getTime();
 			block = block.getParent();
 			newInterval = block.getTime();
-
-
 			myInterval = (oldInterval - newInterval)/1000; //convert to second
 			/*
 			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\blockTime.csv", true);
@@ -139,12 +139,12 @@ public class Main {
 
 		Set<Block> orphans = new HashSet<Block>();
 		int averageOrhansSize =0;
-		for(Node node :getSimulatedNodes()){
+		for(Node node :simulatedNodes){
 			orphans.addAll(node.getOrphans());
 			averageOrhansSize += node.getOrphans().size();
 		}
 		int averageorphanSize = averageOrhansSize;
-		averageOrhansSize = averageOrhansSize/getSimulatedNodes().size();
+		averageOrhansSize = averageOrhansSize/simulatedNodes.size();
 
 		blocks.addAll(orphans);
 
@@ -267,7 +267,7 @@ public class Main {
 		}
 	}
 
-	public static void constructNetworkWithAllNode(int numNodes){
+	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes){
 		//List<String> regions = new ArrayList<>(Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN", "AUSTRALIA", "OTHER"));
 		double[] regionDistribution = getRegionDistribution();
 		List<Integer> regionList  = makeRandomList(regionDistribution,false);
@@ -276,7 +276,7 @@ public class Main {
 
 		for(int id = 1; id <= numNodes; id++){
 			Node node = new Node(id,degreeList.get(id-1)+1,regionList.get(id-1), genMiningPower(),TABLE);
-			addNode(node);
+			addNode(node,simulatedNodes);
 
 			OUT_JSON_FILE.print("{");
 			OUT_JSON_FILE.print(	"\"kind\":\"add-node\",");
@@ -287,11 +287,9 @@ public class Main {
 			OUT_JSON_FILE.print(	"}");
 			OUT_JSON_FILE.print("},");
 			OUT_JSON_FILE.flush();
-
 		}
-
-		for(Node node: getSimulatedNodes()){
-			node.joinNetwork();
+		for(Node node: simulatedNodes){
+			node.joinNetwork(simulatedNodes);
 		}
 
 	}
@@ -301,8 +299,8 @@ public class Main {
 			FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./graph/"+ j +".txt")), false);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-            for(int index =1;index<=getSimulatedNodes().size();index++){
-    			Node node = getSimulatedNodes().get(index-1);
+            for(int index =1;index<=simulatedNodes.size();index++){
+    			Node node = simulatedNodes.get(index-1);
     			for(int i=0;i<node.getNeighbors().size();i++){
     				Node neighter = node.getNeighbors().get(i);
     				pw.println(node.getNodeID()+" " +neighter.getNodeID());

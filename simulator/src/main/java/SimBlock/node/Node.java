@@ -21,22 +21,25 @@ import static SimBlock.simulator.Network.*;
 import static SimBlock.simulator.Simulator.*;
 import static SimBlock.simulator.Timer.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import SimBlock.node.routingTable.AbstractRoutingTable;
+import SimBlock.simulator.Timer;
 import SimBlock.task.AbstractMessageTask;
 import SimBlock.task.BlockMessageTask;
 import SimBlock.task.InvMessageTask;
 import SimBlock.task.MiningTask;
 import SimBlock.task.RecMessageTask;
 import SimBlock.task.Task;
+
 public class Node {
 	private int region;
 	private int nodeID;
 	private long miningPower;
 	private AbstractRoutingTable routingTable;
+	//Timer myTimer = new Timer();
+	//Simulator mySim = new Simulator();
+
 
 	private Block block;
 	private Set<Block> orphans = new HashSet<Block>();
@@ -48,6 +51,7 @@ public class Node {
 	private Set<Block> downloadingBlocks = new HashSet<Block>();
 
 	private long processingTime = 2;
+
 
 	public Node(int nodeID,int nConnection ,int region, long miningPower, String routingTableName){
 		this.nodeID = nodeID;
@@ -77,18 +81,18 @@ public class Node {
 	public int getnConnection(){ return this.routingTable.getnConnection(); }
 
 
-	public void joinNetwork(){
-		this.routingTable.initTable();
+	public void joinNetwork(ArrayList<Node> simulatedNodes){
+		this.routingTable.initTable(simulatedNodes);
 	}
 
-	public void genesisBlock(){
+	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap){
 		Block genesis = new Block(1, null, this, 0);
-		this.receiveBlock(genesis);
+		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap);
 	}
 
-	public void addToChain(Block newBlock) {
+	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap) {
 		if(this.executingTask != null){
-			removeTask(this.executingTask);
+			removeTask(this.executingTask,taskQueue,taskMap);
 			this.executingTask = null;
 		}
 		this.block = newBlock;
@@ -118,35 +122,35 @@ public class Node {
 		}
 	}
 
-	public void mining(){
+	public void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		Task task = new MiningTask(this);
 		this.executingTask = task;
-		putTask(task);
+		putTask(task,taskQueue,taskMap);
 	}
 
-	public void sendInv(Block block){
+	public void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		for(Node to : this.routingTable.getNeighbors()){
 			AbstractMessageTask task = new InvMessageTask(this,to,block);
-			putTask(task);
+			putTask(task, taskQueue, taskMap);
 		}
 	}
 
-	public void receiveBlock(Block receivedBlock){
+	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		Block sameHeightBlock;
 
 		if(this.block == null){
-			this.addToChain(receivedBlock);
-			this.mining();
-			this.sendInv(receivedBlock);
+			this.addToChain(receivedBlock,taskQueue,taskMap);
+			this.mining(simulatedNodes,taskQueue,taskMap);
+			this.sendInv(receivedBlock,taskQueue,taskMap);
 
 		}else if(receivedBlock.getHeight() > this.block.getHeight()){
 			sameHeightBlock = receivedBlock.getBlockWithHeight(this.block.getHeight());
 			if(sameHeightBlock != this.block){
 				this.addOrphans(this.block, sameHeightBlock);
 			}
-			this.addToChain(receivedBlock);
-			this.mining();
-			this.sendInv(receivedBlock);
+			this.addToChain(receivedBlock, taskQueue, taskMap);
+			this.mining(simulatedNodes, taskQueue, taskMap);
+			this.sendInv(receivedBlock, taskQueue, taskMap);
 
 		}else if(receivedBlock.getHeight() <= this.block.getHeight()){
 			sameHeightBlock = this.block.getBlockWithHeight(receivedBlock.getHeight());
@@ -158,7 +162,7 @@ public class Node {
 
 	}
 
-	public void receiveMessage(AbstractMessageTask message){
+	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -166,14 +170,14 @@ public class Node {
 			if(!this.orphans.contains(block) && !this.downloadingBlocks.contains(block)){
 				if(this.block == null || block.getHeight() > this.block.getHeight()){
 					AbstractMessageTask task = new RecMessageTask(this,from,block);
-					putTask(task);
+					putTask(task, taskQueue, taskMap);
 					downloadingBlocks.add(block);
 				}else{
 
 					// get orphan block
 					if(block != this.block.getBlockWithHeight(block.getHeight())){
 						AbstractMessageTask task = new RecMessageTask(this,from,block);
-						putTask(task);
+						putTask(task, taskQueue, taskMap);
 						downloadingBlocks.add(block);
 					}
 				}
@@ -183,19 +187,19 @@ public class Node {
 		if(message instanceof RecMessageTask){
 			this.messageQue.add((RecMessageTask) message);
 			if(!sendingBlock){
-				this.sendNextBlockMessage();
+				this.sendNextBlockMessage(taskQueue, taskMap);
 			}
 		}
 
 		if(message instanceof BlockMessageTask){
 			Block block = ((BlockMessageTask) message).getBlock();
 			downloadingBlocks.remove(block);
-			this.receiveBlock(block);
+			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap);
 		}
 	}
 
 	// send a block to the sender of the next queued recMessage
-	public void sendNextBlockMessage(){
+	public void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		if(this.messageQue.size() > 0){
 
 			sendingBlock = true;
@@ -208,7 +212,7 @@ public class Node {
 			long delay = blockSize * 8 / (bandwidth/1000) + processingTime;
 			BlockMessageTask messageTask = new BlockMessageTask(this, to, block, delay);
 
-			putTask(messageTask);
+			putTask(messageTask, taskQueue, taskMap);
 		}else{
 			sendingBlock = false;
 		}

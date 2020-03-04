@@ -15,31 +15,31 @@
  */
 package SimBlock.simulator;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import SimBlock.node.Node;
 import SimBlock.task.Task;
 
-
 public class Timer {
-	
-	private static PriorityQueue<ScheduledTask> taskQueue = new PriorityQueue<ScheduledTask>();
-	private static Map<Task,ScheduledTask> taskMap = new HashMap<Task,ScheduledTask>();
+
+	//private static PriorityQueue<ScheduledTask> taskQueue = new PriorityQueue<ScheduledTask>();
+	//private static Map<Task,ScheduledTask> taskMap = new HashMap<Task,ScheduledTask>();
 	private static long currentTime = 0L;
-	
-	private static class ScheduledTask implements Comparable<ScheduledTask> {
+
+	public static class ScheduledTask implements Comparable<ScheduledTask> {
 		private final Task task;
 		private final long scheduledTime;
-		
+
 		private ScheduledTask(Task task, long scheduledTime){
 			this.task = task;
 			this.scheduledTime = scheduledTime;
 		}
-		
+
 		private Task getTask(){ return this.task; }
 		private long getScheduledTime(){ return this.scheduledTime; }
-		
+
 		public int compareTo(ScheduledTask o) {
 			if(this.equals(o)) return 0;
 			int order = Long.signum(this.scheduledTime - o.scheduledTime);
@@ -48,26 +48,27 @@ public class Timer {
 			return order;
 		}
 	}
-	
-	public static void runTask(){
+
+	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentScheduledTask = taskQueue.poll();
 			Task currentTask = currentScheduledTask.getTask();
 			currentTime = currentScheduledTask.getScheduledTime();
 			taskMap.remove(currentTask, currentScheduledTask);
-			currentTask.run();
+			currentTask.run(simulatedNodes,taskQueue,taskMap);
 		}
 	}
 
-	public static void removeTask(Task task){
+
+	public static void removeTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		if(taskMap.containsKey(task)){
 			ScheduledTask stask = taskMap.get(task);
 			taskQueue.remove(stask);
 			taskMap.remove(task, stask);
 		}
 	}
-	
-	public static Task getTask(){
+
+	public static Task getTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentTask = taskQueue.peek();
 			return currentTask.getTask();
@@ -75,18 +76,20 @@ public class Timer {
 			return null;
 		}
 	}
-	
-	public static void putTask(Task task){
+
+
+	public static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
 		ScheduledTask stask = new ScheduledTask(task, currentTime + task.getInterval());
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
 	}
-	
+
+	/**
 	public static void putTaskAbsoluteTime(Task task,long time){
 		ScheduledTask stask = new ScheduledTask(task, time);
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
-	}
+	}*/
 	
 	public static long getCurrentTime(){return currentTime;}
 }

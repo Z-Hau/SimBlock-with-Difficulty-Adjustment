@@ -15,7 +15,14 @@
  */
 package SimBlock.task;
 
+import SimBlock.node.Node;
+import SimBlock.simulator.Timer;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.PriorityQueue;
+
 public interface Task {
 	public long getInterval();
-	public void run();
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap);
 }

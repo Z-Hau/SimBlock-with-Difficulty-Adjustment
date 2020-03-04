@@ -29,7 +29,7 @@ public abstract class AbstractRoutingTable {
 	protected Node getSelfNode() {return selfNode;}
 	public void setnConnection(int nConnection) {this.nConnection = nConnection;}
 	public int getnConnection(){return this.nConnection;}
-	public abstract void initTable();
+	public abstract void initTable(ArrayList<Node> simulatedNodes);
 	public abstract ArrayList<Node> getNeighbors();
 	public abstract boolean addNeighbor(Node node);
 	public abstract boolean removeNeighbor(Node node);
