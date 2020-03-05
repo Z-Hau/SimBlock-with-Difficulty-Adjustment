@@ -25,12 +25,13 @@ public class Block {
 	private static int latestId = 0;
 
 
-	public Block(int height, Block parent, Node creator,long generatedTime){
+	public Block(int height, Block parent, Node creator,long generatedTime, double difficulty){
 		this.height = height;
 		this.parent = parent;
 		this.creator = creator;
 		this.generatedTime = generatedTime;
 		this.id = latestId;
+		this.difficulty = difficulty;
 		latestId++;
 	}
 

@@ -16,10 +16,12 @@
 package SimBlock.task;
 import static SimBlock.simulator.Network.*;
 
+import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.simulator.Timer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -39,8 +41,8 @@ public abstract class AbstractMessageTask implements Task{
 		return (long)(latency + 10);
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap){
-		this.to.receiveMessage(this,taskQueue,taskMap);
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+		this.to.receiveMessage(this,taskQueue,taskMap,simulatedNodes,observedBlocks,observedPropagations);
 	}
 
 }

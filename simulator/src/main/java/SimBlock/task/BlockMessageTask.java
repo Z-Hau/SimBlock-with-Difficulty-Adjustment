@@ -23,6 +23,7 @@ import SimBlock.node.Node;
 import SimBlock.simulator.Timer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -42,7 +43,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		return this.interval;
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap){
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		this.getFrom().sendNextBlockMessage(taskQueue,taskMap);
 		
 		OUT_JSON_FILE.print("{");
@@ -57,7 +58,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		OUT_JSON_FILE.print("},");
 		OUT_JSON_FILE.flush();
 
-		super.run(simulatedNodes, taskQueue, taskMap);
+		super.run(simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
 	}
 
 	public Block getBlock(){

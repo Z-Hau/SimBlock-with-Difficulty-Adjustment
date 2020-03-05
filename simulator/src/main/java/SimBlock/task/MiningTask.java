@@ -18,7 +18,6 @@ package SimBlock.task;
 import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.simulator.BoothProblem;
-import SimBlock.simulator.Main;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
 import org.uma.jmetal.example.AlgorithmRunner;
@@ -35,10 +34,7 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import static SimBlock.simulator.Timer.*;
 import static SimBlock.simulator.Simulator.*;
@@ -65,9 +61,9 @@ public class MiningTask implements Task {
 	}
 
 	@Override
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap) {
-		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , getCurrentTime());
-		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap);
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations) {
+		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , getCurrentTime(),getAverageDifficulty());
+		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
 		long myDifficultyInterval = 0;
 		if(runningGA == false)
 		{
@@ -216,8 +212,8 @@ public class MiningTask implements Task {
 						.setCrossoverOperator(crossover)
 						.setMutationOperator(mutation)
 						.setSelectionOperator(selection)
-						.setMaxIterations(10)
-						.setPopulationSize(100)
+						.setMaxIterations(1)
+						.setPopulationSize(1)
 						.build();
 		runningGA = true;
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

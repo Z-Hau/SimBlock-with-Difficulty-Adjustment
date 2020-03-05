@@ -72,7 +72,7 @@ public class Simulator {
 			totalMiningPower +=  node.getMiningPower();
 
 		}
-		System.out.println("total mining power = " + totalMiningPower);
+		//System.out.println("total mining power = " + totalMiningPower);
 		Block myBlock  = simulatedNodes.get(0).getBlock();
 		double totalInterval = 0;
 
@@ -86,7 +86,7 @@ public class Simulator {
 		{
 			 myCounter = GA_DIFFICULTY_INTERVAL;
 			 counter = myCounter;
-			 myTargetInterval = targetIntervalGA;
+			 myTargetInterval = targetIntervalGA * 1000;
 		}
 
 		double minimumDifficulty = 1;
@@ -127,8 +127,16 @@ public class Simulator {
 		//long testing = (long)oldDifficulty * (long)(nPowTargetTimespan/totalInterval);
 		//System.out.println("Testing = " + testing);
 		System.out.println("New Average difficulty = " + newDifficulty);
-		averageDifficulty = newDifficulty;
-		System.out.println("Updated new difficulty = " + averageDifficulty);
+
+		if(runningGA == false)
+		{
+			averageDifficulty = newDifficulty;
+		}
+		else
+		{
+			averageDifficultyGA = newDifficulty;
+		}
+		System.out.println("Updated new difficulty = " + averageDifficultyGA);
 		System.out.println();
 	}
 
@@ -224,10 +232,9 @@ public class Simulator {
 	// Record block propagation time
 	// For saving memory, Record only the latest 10 Blocks
 	//
-	private static ArrayList<Block> observedBlocks = new ArrayList<Block>();
-	private static ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
+
 	
-	public static void arriveBlock(Block block,Node node){
+	public static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		if(observedBlocks.contains(block)){
 			LinkedHashMap<Integer, Long> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
 			Propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
@@ -265,7 +272,7 @@ public class Simulator {
 		System.out.println();
 	}
 	
-	public static void printAllPropagation(){
+	public static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		for(int i=0;i < observedBlocks.size();i++){
 			printPropagation(observedBlocks.get(i), observedPropagations.get(i));
 		}

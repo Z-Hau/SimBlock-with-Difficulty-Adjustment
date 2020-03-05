@@ -11,7 +11,7 @@ import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import static SimBlock.settings.SimulationConfiguration.*;
-import static SimBlock.simulator.Main.writeGraph;
+//import static SimBlock.simulator.Main.writeGraph;
 import static SimBlock.simulator.Main.constructNetworkWithAllNode;
 import static SimBlock.simulator.Timer.*;
 import static SimBlock.simulator.Simulator.*;
@@ -45,6 +45,8 @@ public class BoothProblem extends AbstractIntegerProblem {
          ArrayList<Node> simulatedNodesGA = new ArrayList<Node>();
          PriorityQueue<Timer.ScheduledTask> taskQueueGA = new PriorityQueue<Timer.ScheduledTask>();
          Map<Task, Timer.ScheduledTask> taskMapGA = new HashMap<Task, Timer.ScheduledTask>();
+        ArrayList<Block> observedBlocks = new ArrayList<Block>();
+        ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
         int numberOfVariables = getNumberOfVariables();
         int numberOfObjectives = getNumberOfObjectives();
         ArrayList <Long> blocktimeSD = new ArrayList<Long>();
@@ -64,10 +66,8 @@ public class BoothProblem extends AbstractIntegerProblem {
 
         setTargetIntervalGA(blockInterval);
         GA_DIFFICULTY_INTERVAL = difficultyInterval;
-
-
         constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA);
-        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA);
+        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations);
 
         int j=1;
         while(getTask(simulatedNodesGA,taskQueueGA,taskMapGA) != null){
@@ -75,9 +75,9 @@ public class BoothProblem extends AbstractIntegerProblem {
                 MiningTask task = (MiningTask) getTask(simulatedNodesGA, taskQueueGA, taskMapGA);
                 if(task.getParent().getHeight() == j) j++;
                 if(j > ENDBLOCKHEIGHT){break;}
-                if(j%100==0 || j==2) writeGraph(j);
+                //if(j%100==0 || j==2) writeGraph(j);
             }
-            runTask(simulatedNodesGA,taskQueueGA,taskMapGA);
+            runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations);
         }
 
         Set<Block> blocks = new HashSet<Block>();
@@ -89,7 +89,6 @@ public class BoothProblem extends AbstractIntegerProblem {
         long myInterval = 0;
         long myDifficulty = 0;
 
-
         while(block.getParent() != null){
             blocks.add(block);
             oldInterval = block.getTime();
@@ -97,11 +96,10 @@ public class BoothProblem extends AbstractIntegerProblem {
             newInterval = block.getTime();
             myInterval = (oldInterval - newInterval)/1000; //convert to second
             blocktimeSD.add(myInterval);
-            myDifficulty =  (long) getAverageDifficulty();
+            myDifficulty = (long) block.getDifficulty();
             difficultySD.add(myDifficulty);
             counter1 = counter1+1;
         }
-
         /** 1st objective: standard deviation of blocktime */
         f[0] = calculateSD(blocktimeSD);
 
@@ -112,8 +110,6 @@ public class BoothProblem extends AbstractIntegerProblem {
         for (int i = 0; i < numberOfObjectives; i++) {
             integerSolution.setObjective(i, f[i]);
         }
-
-
     }
 
     public int calculateSD(ArrayList <Long> numArray)
@@ -121,20 +117,13 @@ public class BoothProblem extends AbstractIntegerProblem {
         long sum = 0;
         double standardDeviation = 0;
         int length = numArray.size();
-
         for(long num : numArray) {
             sum += num;
         }
-
         double mean = sum/length;
-
         for(long num: numArray) {
             standardDeviation += Math.pow(num - mean, 2);
         }
-
-        int wtf = (int) Math.round(Math.sqrt(standardDeviation/length));
-        return wtf;
+        return (int) Math.round(Math.sqrt(standardDeviation/length));
     }
-
-
 }

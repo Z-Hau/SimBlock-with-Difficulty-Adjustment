@@ -16,9 +16,11 @@
 package SimBlock.simulator;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.task.Task;
 
@@ -49,13 +51,13 @@ public class Timer {
 		}
 	}
 
-	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentScheduledTask = taskQueue.poll();
 			Task currentTask = currentScheduledTask.getTask();
 			currentTime = currentScheduledTask.getScheduledTime();
 			taskMap.remove(currentTask, currentScheduledTask);
-			currentTask.run(simulatedNodes,taskQueue,taskMap);
+			currentTask.run(simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations);
 		}
 	}
 

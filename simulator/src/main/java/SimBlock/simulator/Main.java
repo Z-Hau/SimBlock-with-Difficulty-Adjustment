@@ -49,10 +49,6 @@ public class Main {
 
 
 
-	public static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
-	public static PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
-	public static Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
-
 	static {
 		try {
 			CONF_FILE_URI = ClassLoader.getSystemResource("simulator.conf").toURI();
@@ -85,31 +81,38 @@ public class Main {
 	public static void main(String[] args)  {
 
 
+		ArrayList<Node> simulatedNodesGlobal = new ArrayList<Node>();
+		PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
+		Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
+		ArrayList<Block> observedBlocks = new ArrayList<Block>();
+		ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
+
+
 		long start = System.currentTimeMillis();
 		setTargetInterval(INTERVAL);
 		OUT_JSON_FILE.print("["); //start json format
 		OUT_JSON_FILE.flush();
 
 		printRegion();
-		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodes);
-		simulatedNodes.get(0).genesisBlock(simulatedNodes,taskQueueGlobal,taskMapGlobal);
+		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGlobal);
+		simulatedNodesGlobal.get(0).genesisBlock(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocks,observedPropagations);
 
 		int j=1;
-		while(getTask(simulatedNodes,taskQueueGlobal,taskMapGlobal) != null){
-			if(getTask(simulatedNodes, taskQueueGlobal, taskMapGlobal) instanceof MiningTask){
-				MiningTask task = (MiningTask) getTask(simulatedNodes, taskQueueGlobal, taskMapGlobal);
+		while(getTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal) != null){
+			if(getTask(simulatedNodesGlobal, taskQueueGlobal, taskMapGlobal) instanceof MiningTask){
+				MiningTask task = (MiningTask) getTask(simulatedNodesGlobal, taskQueueGlobal, taskMapGlobal);
 				if(task.getParent().getHeight() == j) j++;
 				if(j > ENDBLOCKHEIGHT){break;}
-				if(j%100==0 || j==2) writeGraph(j);
+				//if(j%100==0 || j==2) writeGraph(j);
 			}
-			runTask(simulatedNodes,taskQueueGlobal,taskMapGlobal);
+			runTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocks,observedPropagations);
 		}
 
-		printAllPropagation();
+		printAllPropagation(observedBlocks,observedPropagations);
 		System.out.println();
 
 		Set<Block> blocks = new HashSet<Block>();
-		Block block  = simulatedNodes.get(0).getBlock();
+		Block block  = simulatedNodesGlobal.get(0).getBlock();
 		int counter1 = 1;
 		long oldInterval = 0;
 		long newInterval = 0;
@@ -139,12 +142,12 @@ public class Main {
 
 		Set<Block> orphans = new HashSet<Block>();
 		int averageOrhansSize =0;
-		for(Node node :simulatedNodes){
+		for(Node node :simulatedNodesGlobal){
 			orphans.addAll(node.getOrphans());
 			averageOrhansSize += node.getOrphans().size();
 		}
 		int averageorphanSize = averageOrhansSize;
-		averageOrhansSize = averageOrhansSize/simulatedNodes.size();
+		averageOrhansSize = averageOrhansSize/simulatedNodesGlobal.size();
 
 		blocks.addAll(orphans);
 
@@ -293,14 +296,14 @@ public class Main {
 		}
 
 	}
-
+	/**
 	public static void writeGraph(int j){
 		try {
 			FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./graph/"+ j +".txt")), false);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-            for(int index =1;index<=simulatedNodes.size();index++){
-    			Node node = simulatedNodes.get(index-1);
+            for(int index =1;index<=simulatedNodesGlobal.size();index++){
+    			Node node = simulatedNodesGlobal.get(index-1);
     			for(int i=0;i<node.getNeighbors().size();i++){
     				Node neighter = node.getNeighbors().get(i);
     				pw.println(node.getNodeID()+" " +neighter.getNodeID());
@@ -311,6 +314,7 @@ public class Main {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-	}
 
+	}
+	 */
 }

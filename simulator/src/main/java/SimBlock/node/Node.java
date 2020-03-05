@@ -24,7 +24,6 @@ import static SimBlock.simulator.Timer.*;
 import java.util.*;
 
 import SimBlock.node.routingTable.AbstractRoutingTable;
-import SimBlock.simulator.Timer;
 import SimBlock.task.AbstractMessageTask;
 import SimBlock.task.BlockMessageTask;
 import SimBlock.task.InvMessageTask;
@@ -85,19 +84,19 @@ public class Node {
 		this.routingTable.initTable(simulatedNodes);
 	}
 
-	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap){
-		Block genesis = new Block(1, null, this, 0);
-		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap);
+	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+		Block genesis = new Block(1, null, this, 0,1);
+		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations);
 	}
 
-	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap) {
+	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations) {
 		if(this.executingTask != null){
 			removeTask(this.executingTask,taskQueue,taskMap);
 			this.executingTask = null;
 		}
 		this.block = newBlock;
 		printAddBlock(newBlock);
-		arriveBlock(newBlock, this);
+		arriveBlock(newBlock, this,observedBlocks,observedPropagations);
 	}
 
 	private void printAddBlock(Block newBlock){
@@ -135,11 +134,11 @@ public class Node {
 		}
 	}
 
-	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		Block sameHeightBlock;
 
 		if(this.block == null){
-			this.addToChain(receivedBlock,taskQueue,taskMap);
+			this.addToChain(receivedBlock,taskQueue,taskMap,observedBlocks,observedPropagations);
 			this.mining(simulatedNodes,taskQueue,taskMap);
 			this.sendInv(receivedBlock,taskQueue,taskMap);
 
@@ -148,7 +147,7 @@ public class Node {
 			if(sameHeightBlock != this.block){
 				this.addOrphans(this.block, sameHeightBlock);
 			}
-			this.addToChain(receivedBlock, taskQueue, taskMap);
+			this.addToChain(receivedBlock, taskQueue, taskMap, observedBlocks, observedPropagations);
 			this.mining(simulatedNodes, taskQueue, taskMap);
 			this.sendInv(receivedBlock, taskQueue, taskMap);
 
@@ -156,13 +155,13 @@ public class Node {
 			sameHeightBlock = this.block.getBlockWithHeight(receivedBlock.getHeight());
 			if(!this.orphans.contains(receivedBlock) && receivedBlock != sameHeightBlock){
 				this.addOrphans(receivedBlock, sameHeightBlock);
-				arriveBlock(receivedBlock, this);
+				arriveBlock(receivedBlock, this, observedBlocks, observedPropagations);
 			}
 		}
 
 	}
 
-	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -194,7 +193,7 @@ public class Node {
 		if(message instanceof BlockMessageTask){
 			Block block = ((BlockMessageTask) message).getBlock();
 			downloadingBlocks.remove(block);
-			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap);
+			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
 		}
 	}
 
