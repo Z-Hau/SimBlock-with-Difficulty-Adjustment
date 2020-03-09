@@ -18,18 +18,31 @@ package SimBlock.task;
 import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.simulator.BoothProblem;
+import SimBlock.simulator.myNSGAII;
+import SimBlock.simulator.ParallelNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.jmetal5version.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
+import org.uma.jmetal.component.termination.Termination;
+import org.uma.jmetal.component.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.example.AlgorithmRunner;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
+import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
+import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.operator.selection.impl.BinaryTournamentSelection;
+import org.uma.jmetal.operator.selection.impl.TournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -49,7 +62,7 @@ public class MiningTask implements Task {
 	public MiningTask(Node miningNode) {
 		this.miningNode = miningNode;
 		this.parentBlock = miningNode.getBlock();
-	
+
 		double p = 1.0 / getAverageDifficulty();
 		double u = random.nextDouble();
 		this.interval = (long)(  ( Math.log(u) / Math.log(1.0-p) ) / this.miningNode.getMiningPower() );
@@ -83,8 +96,17 @@ public class MiningTask implements Task {
 					setBitcoinAverageDifficulty(simulatedNodes);
 					if(runningGA == false)
 					{
-						runGA();
+						System.out.println("Running GA....");
+						//runNSGAIII();
+						//ParallelNSGAII parallelRunGA = new ParallelNSGAII();
+						//parallelRunGA.main(null);
+						myNSGAII runNSGGAII = new myNSGAII();
+						ArrayList <Double> myResult = runNSGGAII.main(null);
 						runningGA = false;
+						firstGARun = false;
+						INTERVAL = (new Double(myResult.get(0))).longValue();
+						DIFFICULTY_INTERVAL = (new Double(myResult.get(1))).intValue();
+						System.out.println("GA Stopped....");
 					}
 				}
 			}
@@ -98,7 +120,6 @@ public class MiningTask implements Task {
 					setBitcoinAverageDifficulty(simulatedNodes);
 				}
 			}
-
 		}
 		else if (SIMULATION_TYPE.equals("dogecoin"))
 		{
@@ -183,12 +204,12 @@ public class MiningTask implements Task {
 		return this.parentBlock;
 	}
 
-	public void runGA(){
-		Problem<IntegerSolution> problem;
-		Algorithm<List<IntegerSolution>> algorithm;
-		CrossoverOperator<IntegerSolution> crossover;
-		MutationOperator<IntegerSolution> mutation;
-		SelectionOperator<List<IntegerSolution>, IntegerSolution> selection;
+	public ArrayList <Double> runNSGAIII(){
+		Problem<DoubleSolution> problem;
+		Algorithm<List<DoubleSolution>> algorithm;
+		CrossoverOperator<DoubleSolution> crossover;
+		MutationOperator<DoubleSolution> mutation;
+		SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
 		// 定义优化问题
 		problem = new BoothProblem();
@@ -198,13 +219,13 @@ public class MiningTask implements Task {
 		// SBX交叉算子
 		double crossoverProbability = 0.9;
 		double crossoverDistributionIndex = 30.0;
-		crossover = new IntegerSBXCrossover(crossoverProbability, crossoverDistributionIndex);
+		crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
 
 		double mutationProbability = 1.0 / problem.getNumberOfVariables();
 		double mutationDistributionIndex = 20.0;
-		mutation = new IntegerPolynomialMutation(mutationProbability, mutationDistributionIndex);
+		mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-		selection = new BinaryTournamentSelection<IntegerSolution>();
+		selection = new BinaryTournamentSelection<DoubleSolution>();
 
 		// 注册
 		algorithm =
@@ -218,16 +239,21 @@ public class MiningTask implements Task {
 		runningGA = true;
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<IntegerSolution> population = algorithm.getResult();
+		List<DoubleSolution> population = algorithm.getResult();
 		long computingTime = algorithmRunner.getComputingTime();
 
 		new SolutionListOutput(population)
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.csv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.csv"))
 				.print();
-
+		ArrayList <Double> myResult = new ArrayList<Double>();
+		myResult.add(0, population.get(0).getVariable(0));
+		myResult.add(1, population.get(0).getVariable(1));
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Objectives values have been written to file FUN.csv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.csv");
+
+		return myResult;
 	}
+
 }

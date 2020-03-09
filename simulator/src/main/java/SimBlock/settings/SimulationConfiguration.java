@@ -21,7 +21,7 @@ public class SimulationConfiguration {
 	public static final String TABLE = "SimBlock.node.routingTable.BitcoinCoreTable";
 
 	// Unit: millisecond
-	public static final long INTERVAL = 1000*60*10;//1000*60(doge);//1000*30*5(lite);//1000*60*10(bitcoin);
+	public static long INTERVAL = 1000*60*10;//1000*60(doge);//1000*30*5(lite);//1000*60*10(bitcoin);
 	public static long GA_INTERVAL = 0;
 
 	// Mining power is the number of mining (hash calculation) executed per millisecond.
@@ -33,7 +33,7 @@ public class SimulationConfiguration {
 	// Unit: byte
 	public static final long BLOCKSIZE = 535000;//6110(lite);//8000(doge);//535000(bitcoin);//0.5MB
 
-	public static final int DIFFICULTY_INTERVAL = 10; //readjust difficulty once every N block
+	public static int DIFFICULTY_INTERVAL = 2016; //readjust difficulty once every N block
 	public static int GA_DIFFICULTY_INTERVAL = 1;
 	public static final int CHANGE_MINING_POWER_INTERVAL = 0; //1(every block); 0(no changes)
 	public static final double MINING_POWER_INCREASE_PERCENTAGE = 0.5; //the chance to increase
@@ -41,4 +41,5 @@ public class SimulationConfiguration {
 	public static final String SIMULATION_TYPE = "bitcoin"; //dogecoin; litecoin; bitcoin
 
 	public static boolean runningGA = false;
+	public static boolean firstGARun = true;
 }

@@ -29,12 +29,23 @@ public class Simulator {
     //private static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
 	private static long targetInterval;// = 1000*60*10;//msec
 	private static long targetIntervalGA;
-	private static double averageDifficulty;
-	private static double averageDifficultyGA;
+	public static double averageDifficulty;
+	public static double averageDifficultyGA;
 	//public Timer myTime = new Timer();
 
 	//public static ArrayList<Node> getSimulatedNodes(){ return simulatedNodes; }
-	public static double getAverageDifficulty(){ return averageDifficulty; }
+	public static double getAverageDifficulty()
+	{
+		if(runningGA == false)
+		{
+			return averageDifficulty;
+		}
+		else
+		{
+			return averageDifficultyGA;
+		}
+
+	}
 	public static double getAverageDifficultyGA(){return averageDifficultyGA;}
 	public static void setTargetIntervalGA(long interval) {targetIntervalGA = interval;}
 	public static void setTargetInterval(long interval){ targetInterval = interval; }
@@ -116,8 +127,8 @@ public class Simulator {
 		{
 			totalInterval = nPowTargetTimespan * 4;
 		}
-		System.out.println("total interval = " + totalInterval);
-		System.out.println("Old average difficulty = " + oldDifficulty);
+		//System.out.println("total interval = " + totalInterval);
+		//System.out.println("Old average difficulty = " + oldDifficulty);
 		double newDifficulty = oldDifficulty * nPowTargetTimespan/totalInterval;
 		if(newDifficulty <= minimumDifficulty )
 		{
@@ -126,7 +137,7 @@ public class Simulator {
 		//oldDifficulty = 999999999999999999L;
 		//long testing = (long)oldDifficulty * (long)(nPowTargetTimespan/totalInterval);
 		//System.out.println("Testing = " + testing);
-		System.out.println("New Average difficulty = " + newDifficulty);
+		//System.out.println("New Average difficulty = " + newDifficulty);
 
 		if(runningGA == false)
 		{
@@ -136,8 +147,8 @@ public class Simulator {
 		{
 			averageDifficultyGA = newDifficulty;
 		}
-		System.out.println("Updated new difficulty = " + averageDifficultyGA);
-		System.out.println();
+		//System.out.println("Updated new difficulty = " + averageDifficultyGA);
+		//System.out.println();
 	}
 
 	public static void setDogecoinAverageDifficulty(ArrayList<Node> simulatedNodes){
