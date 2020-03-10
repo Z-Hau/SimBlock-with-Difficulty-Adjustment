@@ -80,30 +80,30 @@ public class Node {
 	public int getnConnection(){ return this.routingTable.getnConnection(); }
 
 
-	public void joinNetwork(ArrayList<Node> simulatedNodes){
-		this.routingTable.initTable(simulatedNodes);
+	public void joinNetwork(ArrayList<Node> simulatedNodes, long currentTime){
+		this.routingTable.initTable(simulatedNodes,currentTime);
 	}
 
-	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		Block genesis = new Block(1, null, this, 0,1);
-		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations);
+		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
 	}
 
-	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations) {
+	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
 		if(this.executingTask != null){
 			removeTask(this.executingTask,taskQueue,taskMap);
 			this.executingTask = null;
 		}
 		this.block = newBlock;
-		printAddBlock(newBlock);
-		arriveBlock(newBlock, this,observedBlocks,observedPropagations);
+		printAddBlock(newBlock,currentTime);
+		arriveBlock(newBlock, this,observedBlocks,observedPropagations,currentTime);
 	}
 
-	private void printAddBlock(Block newBlock){
+	private void printAddBlock(Block newBlock, long currentTime){
 		OUT_JSON_FILE.print("{");
 		OUT_JSON_FILE.print(	"\"kind\":\"add-block\",");
 		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"timestamp\":" + getCurrentTime() + ",");
+		OUT_JSON_FILE.print(		"\"timestamp\":" + currentTime + ",");
 		OUT_JSON_FILE.print(		"\"node-id\":" + this.getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"block-id\":" + newBlock.getId());
 		OUT_JSON_FILE.print(	"}");
@@ -121,47 +121,47 @@ public class Node {
 		}
 	}
 
-	public void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		Task task = new MiningTask(this);
 		this.executingTask = task;
-		putTask(task,taskQueue,taskMap);
+		putTask(task,taskQueue,taskMap,currentTime);
 	}
 
-	public void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		for(Node to : this.routingTable.getNeighbors()){
 			AbstractMessageTask task = new InvMessageTask(this,to,block);
-			putTask(task, taskQueue, taskMap);
+			putTask(task, taskQueue, taskMap, currentTime);
 		}
 	}
 
-	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		Block sameHeightBlock;
 
 		if(this.block == null){
-			this.addToChain(receivedBlock,taskQueue,taskMap,observedBlocks,observedPropagations);
-			this.mining(simulatedNodes,taskQueue,taskMap);
-			this.sendInv(receivedBlock,taskQueue,taskMap);
+			this.addToChain(receivedBlock,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
+			this.mining(simulatedNodes,taskQueue,taskMap,currentTime);
+			this.sendInv(receivedBlock,taskQueue,taskMap,currentTime);
 
 		}else if(receivedBlock.getHeight() > this.block.getHeight()){
 			sameHeightBlock = receivedBlock.getBlockWithHeight(this.block.getHeight());
 			if(sameHeightBlock != this.block){
 				this.addOrphans(this.block, sameHeightBlock);
 			}
-			this.addToChain(receivedBlock, taskQueue, taskMap, observedBlocks, observedPropagations);
-			this.mining(simulatedNodes, taskQueue, taskMap);
-			this.sendInv(receivedBlock, taskQueue, taskMap);
+			this.addToChain(receivedBlock, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
+			this.mining(simulatedNodes, taskQueue, taskMap, currentTime);
+			this.sendInv(receivedBlock, taskQueue, taskMap, currentTime);
 
 		}else if(receivedBlock.getHeight() <= this.block.getHeight()){
 			sameHeightBlock = this.block.getBlockWithHeight(receivedBlock.getHeight());
 			if(!this.orphans.contains(receivedBlock) && receivedBlock != sameHeightBlock){
 				this.addOrphans(receivedBlock, sameHeightBlock);
-				arriveBlock(receivedBlock, this, observedBlocks, observedPropagations);
+				arriveBlock(receivedBlock, this, observedBlocks, observedPropagations, currentTime);
 			}
 		}
 
 	}
 
-	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -169,14 +169,14 @@ public class Node {
 			if(!this.orphans.contains(block) && !this.downloadingBlocks.contains(block)){
 				if(this.block == null || block.getHeight() > this.block.getHeight()){
 					AbstractMessageTask task = new RecMessageTask(this,from,block);
-					putTask(task, taskQueue, taskMap);
+					putTask(task, taskQueue, taskMap, currentTime);
 					downloadingBlocks.add(block);
 				}else{
 
 					// get orphan block
 					if(block != this.block.getBlockWithHeight(block.getHeight())){
 						AbstractMessageTask task = new RecMessageTask(this,from,block);
-						putTask(task, taskQueue, taskMap);
+						putTask(task, taskQueue, taskMap, currentTime);
 						downloadingBlocks.add(block);
 					}
 				}
@@ -186,19 +186,19 @@ public class Node {
 		if(message instanceof RecMessageTask){
 			this.messageQue.add((RecMessageTask) message);
 			if(!sendingBlock){
-				this.sendNextBlockMessage(taskQueue, taskMap);
+				this.sendNextBlockMessage(taskQueue, taskMap, currentTime);
 			}
 		}
 
 		if(message instanceof BlockMessageTask){
 			Block block = ((BlockMessageTask) message).getBlock();
 			downloadingBlocks.remove(block);
-			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
+			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
 		}
 	}
 
 	// send a block to the sender of the next queued recMessage
-	public void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		if(this.messageQue.size() > 0){
 
 			sendingBlock = true;
@@ -211,7 +211,7 @@ public class Node {
 			long delay = blockSize * 8 / (bandwidth/1000) + processingTime;
 			BlockMessageTask messageTask = new BlockMessageTask(this, to, block, delay);
 
-			putTask(messageTask, taskQueue, taskMap);
+			putTask(messageTask, taskQueue, taskMap, currentTime);
 		}else{
 			sendingBlock = false;
 		}

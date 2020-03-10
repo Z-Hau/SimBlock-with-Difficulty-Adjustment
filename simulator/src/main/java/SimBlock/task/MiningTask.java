@@ -18,35 +18,28 @@ package SimBlock.task;
 import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.simulator.BoothProblem;
-import SimBlock.simulator.myNSGAII;
 import SimBlock.simulator.ParallelNSGAII;
+import SimBlock.simulator.myNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.nsgaii.jmetal5version.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
-import org.uma.jmetal.component.termination.Termination;
-import org.uma.jmetal.component.termination.impl.TerminationByEvaluations;
 import org.uma.jmetal.example.AlgorithmRunner;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
-import org.uma.jmetal.operator.crossover.impl.IntegerSBXCrossover;
 import org.uma.jmetal.operator.crossover.impl.SBXCrossover;
 import org.uma.jmetal.operator.mutation.MutationOperator;
-import org.uma.jmetal.operator.mutation.impl.IntegerPolynomialMutation;
 import org.uma.jmetal.operator.mutation.impl.PolynomialMutation;
 import org.uma.jmetal.operator.selection.SelectionOperator;
 import org.uma.jmetal.operator.selection.impl.BinaryTournamentSelection;
-import org.uma.jmetal.operator.selection.impl.TournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.integersolution.IntegerSolution;
-import org.uma.jmetal.util.AbstractAlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
-import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-import org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import static SimBlock.simulator.Timer.*;
@@ -74,9 +67,9 @@ public class MiningTask implements Task {
 	}
 
 	@Override
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations) {
-		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , getCurrentTime(),getAverageDifficulty());
-		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
+		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , currentTime ,getAverageDifficulty());
+		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
 		long myDifficultyInterval = 0;
 		if(runningGA == false)
 		{
@@ -85,13 +78,14 @@ public class MiningTask implements Task {
 		else
 		{
 			myDifficultyInterval = GA_DIFFICULTY_INTERVAL;
+			TOTAL_PREVIOUS_BLOCK_HEIGHT = 0;
 		}
 
 		if(SIMULATION_TYPE.equals("bitcoin"))
 		{
 			if(myDifficultyInterval != 0)
 			{
-				if((this.parentBlock.getHeight()+1) % myDifficultyInterval == 0)
+				if(((this.parentBlock.getHeight()+1)- TOTAL_PREVIOUS_BLOCK_HEIGHT) % myDifficultyInterval == 0)
 				{
 					setBitcoinAverageDifficulty(simulatedNodes);
 					if(runningGA == false)
@@ -99,14 +93,26 @@ public class MiningTask implements Task {
 						System.out.println("Running GA....");
 						//runNSGAIII();
 						//ParallelNSGAII parallelRunGA = new ParallelNSGAII();
-						//parallelRunGA.main(null);
+						//ArrayList <Double> myResult = parallelRunGA.main(null);
 						myNSGAII runNSGGAII = new myNSGAII();
 						ArrayList <Double> myResult = runNSGGAII.main(null);
 						runningGA = false;
 						firstGARun = false;
-						INTERVAL = (new Double(myResult.get(0))).longValue();
+						INTERVAL = ((new Double(myResult.get(0))).longValue()*1000);
+						//OLD_DIFFICULTY_INTERVAL = DIFFICULTY_INTERVAL;
+						TOTAL_PREVIOUS_BLOCK_HEIGHT = this.parentBlock.getHeight();
 						DIFFICULTY_INTERVAL = (new Double(myResult.get(1))).intValue();
 						System.out.println("GA Stopped....");
+						try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\testing-ga.csv", true);
+							BufferedWriter bw = new BufferedWriter(fw);
+							PrintWriter out = new PrintWriter(bw))
+						{
+							out.println(INTERVAL + "," + DIFFICULTY_INTERVAL + "," + this.parentBlock.getHeight());
+
+
+						} catch (IOException e) {
+							//exception handling left as an exercise for the reader
+						}
 					}
 				}
 			}

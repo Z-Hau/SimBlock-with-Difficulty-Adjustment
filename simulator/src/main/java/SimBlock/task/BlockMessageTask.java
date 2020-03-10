@@ -17,10 +17,11 @@ package SimBlock.task;
 
 import static SimBlock.simulator.Main.*;
 import static SimBlock.simulator.Network.*;
+import static SimBlock.simulator.Timer.*;
 
 import SimBlock.node.Block;
 import SimBlock.node.Node;
-import SimBlock.simulator.Timer;
+
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,7 +32,6 @@ public class BlockMessageTask extends AbstractMessageTask {
 
 	private Block block;
 	private long interval;
-	Timer myTime = new Timer();
 
 	public BlockMessageTask(Node from, Node to, Block block ,long delay) {
 		super(from, to);
@@ -43,22 +43,21 @@ public class BlockMessageTask extends AbstractMessageTask {
 		return this.interval;
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
-		this.getFrom().sendNextBlockMessage(taskQueue,taskMap);
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+		this.getFrom().sendNextBlockMessage(taskQueue,taskMap,currentTime);
 		
 		OUT_JSON_FILE.print("{");
 		OUT_JSON_FILE.print(	"\"kind\":\"flow-block\",");
 		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (myTime.getCurrentTime() - this.interval) + ",");
-		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + myTime.getCurrentTime() + ",");
+		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (currentTime - this.interval) + ",");
+		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + currentTime + ",");
 		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getFrom().getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"end-node-id\":" + getTo().getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"block-id\":" + block.getId());
 		OUT_JSON_FILE.print(	"}");
 		OUT_JSON_FILE.print("},");
 		OUT_JSON_FILE.flush();
-
-		super.run(simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations);
+		super.run(simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
 	}
 
 	public Block getBlock(){

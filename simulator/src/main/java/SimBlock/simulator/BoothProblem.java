@@ -1,5 +1,9 @@
 package SimBlock.simulator;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 
@@ -8,9 +12,7 @@ import SimBlock.node.Node;
 import SimBlock.task.MiningTask;
 import SimBlock.task.Task;
 import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
-import org.uma.jmetal.problem.integerproblem.impl.AbstractIntegerProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
-import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import static SimBlock.settings.SimulationConfiguration.*;
 //import static SimBlock.simulator.Main.writeGraph;
@@ -52,6 +54,7 @@ public class BoothProblem extends AbstractDoubleProblem {
         int numberOfObjectives = getNumberOfObjectives();
         ArrayList <Double> blocktimeSD = new ArrayList<Double>();
         ArrayList <Double> difficultySD = new ArrayList<Double>();
+        long currentTime = 0L;
 
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
@@ -80,8 +83,8 @@ public class BoothProblem extends AbstractDoubleProblem {
         }
         setTargetIntervalGA((long) blockInterval*1000);
         GA_DIFFICULTY_INTERVAL = (int) difficultyInterval;
-        constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA);
-        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations);
+        constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA, currentTime);
+        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime);
 
         int j=1;
         while(getTask(simulatedNodesGA,taskQueueGA,taskMapGA) != null){
@@ -91,7 +94,7 @@ public class BoothProblem extends AbstractDoubleProblem {
                 if(j > ENDBLOCKHEIGHT){break;}
                 //if(j%100==0 || j==2) writeGraph(j);
             }
-            runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations);
+            runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime);
         }
 
         Set<Block> blocks = new HashSet<Block>();
@@ -130,6 +133,17 @@ public class BoothProblem extends AbstractDoubleProblem {
         System.out.println("Obj 1 = " + f[0]);
         System.out.println("Obj 1 = " + f[1]);
         System.out.println();
+
+        try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\GA-PARAMETERS.csv", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw))
+        {
+            out.println(x[0] + "," + x[1] + "," + f[0] + "," + f[1]) ;
+
+
+        } catch (IOException e) {
+            //exception handling left as an exercise for the reader
+        }
     }
 
     public double calculateSD(ArrayList <Double> numArray)

@@ -28,7 +28,7 @@ public class Timer {
 
 	//private static PriorityQueue<ScheduledTask> taskQueue = new PriorityQueue<ScheduledTask>();
 	//private static Map<Task,ScheduledTask> taskMap = new HashMap<Task,ScheduledTask>();
-	private static long currentTime = 0L;
+	//private static long currentTime = 0L;
 
 	public static class ScheduledTask implements Comparable<ScheduledTask> {
 		private final Task task;
@@ -51,13 +51,13 @@ public class Timer {
 		}
 	}
 
-	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentScheduledTask = taskQueue.poll();
 			Task currentTask = currentScheduledTask.getTask();
 			currentTime = currentScheduledTask.getScheduledTime();
 			taskMap.remove(currentTask, currentScheduledTask);
-			currentTask.run(simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations);
+			currentTask.run(simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class Timer {
 	}
 
 
-	public static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		ScheduledTask stask = new ScheduledTask(task, currentTime + task.getInterval());
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
@@ -93,5 +93,5 @@ public class Timer {
 		taskQueue.add(stask);
 	}*/
 	
-	public static long getCurrentTime(){return currentTime;}
+	//public static long getCurrentTime(){return currentTime;}
 }

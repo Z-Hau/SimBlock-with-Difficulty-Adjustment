@@ -21,7 +21,7 @@ import java.util.Map;
 
 import SimBlock.node.Block;
 import SimBlock.node.Node;
-import static SimBlock.simulator.Timer.*;
+
 import static SimBlock.settings.SimulationConfiguration.*;
 
 
@@ -78,12 +78,6 @@ public class Simulator {
 		int myCounter = 0;
 		int counter = 0;
 		long myTargetInterval = 0;
-		long totalMiningPower = 0;
-		for(Node node : simulatedNodes){
-			totalMiningPower +=  node.getMiningPower();
-
-		}
-		//System.out.println("total mining power = " + totalMiningPower);
 		Block myBlock  = simulatedNodes.get(0).getBlock();
 		double totalInterval = 0;
 
@@ -97,7 +91,7 @@ public class Simulator {
 		{
 			 myCounter = GA_DIFFICULTY_INTERVAL;
 			 counter = myCounter;
-			 myTargetInterval = targetIntervalGA * 1000;
+			 myTargetInterval = targetIntervalGA ;
 		}
 
 		double minimumDifficulty = 1;
@@ -245,10 +239,10 @@ public class Simulator {
 	//
 
 	
-	public static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		if(observedBlocks.contains(block)){
 			LinkedHashMap<Integer, Long> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
-			Propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
+			Propagation.put(node.getNodeID(), currentTime - block.getTime());
 		}else{
 			if(observedBlocks.size() > 10){
 				printPropagation(observedBlocks.get(0),observedPropagations.get(0));
@@ -256,7 +250,7 @@ public class Simulator {
 				observedPropagations.remove(0);
 			}
 			LinkedHashMap<Integer, Long> propagation = new LinkedHashMap<Integer, Long>();
-			propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
+			propagation.put(node.getNodeID(), currentTime - block.getTime());
 			observedBlocks.add(block);
 			observedPropagations.add(propagation);
 		}

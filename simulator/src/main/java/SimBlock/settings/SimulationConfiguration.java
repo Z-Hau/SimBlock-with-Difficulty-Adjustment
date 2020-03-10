@@ -42,4 +42,7 @@ public class SimulationConfiguration {
 
 	public static boolean runningGA = false;
 	public static boolean firstGARun = true;
+	public static int OLD_DIFFICULTY_INTERVAL = 2016;
+	public static int TOTAL_PREVIOUS_BLOCK_HEIGHT = 2016;
+
 }

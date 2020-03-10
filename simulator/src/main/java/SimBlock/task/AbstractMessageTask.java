@@ -41,8 +41,8 @@ public abstract class AbstractMessageTask implements Task{
 		return (long)(latency + 10);
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
-		this.to.receiveMessage(this,taskQueue,taskMap,simulatedNodes,observedBlocks,observedPropagations);
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+		this.to.receiveMessage(this,taskQueue,taskMap,simulatedNodes,observedBlocks,observedPropagations,currentTime);
 	}
 
 }

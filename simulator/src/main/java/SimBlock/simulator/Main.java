@@ -79,13 +79,12 @@ public class Main {
 	}
 
 	public static void main(String[] args)  {
-
-
 		ArrayList<Node> simulatedNodesGlobal = new ArrayList<Node>();
 		PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
 		Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
-		ArrayList<Block> observedBlocks = new ArrayList<Block>();
-		ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
+		ArrayList<Block> observedBlocksGlobal = new ArrayList<Block>();
+		ArrayList<LinkedHashMap<Integer, Long>> observedPropagationsGlobal = new ArrayList<LinkedHashMap<Integer, Long>>();
+		long currentTime = 0L;
 
 
 		long start = System.currentTimeMillis();
@@ -94,8 +93,8 @@ public class Main {
 		OUT_JSON_FILE.flush();
 
 		printRegion();
-		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGlobal);
-		simulatedNodesGlobal.get(0).genesisBlock(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocks,observedPropagations);
+		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGlobal,currentTime);
+		simulatedNodesGlobal.get(0).genesisBlock(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocksGlobal,observedPropagationsGlobal,currentTime);
 
 		int j=1;
 		while(getTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal) != null){
@@ -105,10 +104,10 @@ public class Main {
 				if(j > ENDBLOCKHEIGHT){break;}
 				//if(j%100==0 || j==2) writeGraph(j);
 			}
-			runTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocks,observedPropagations);
+			runTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocksGlobal,observedPropagationsGlobal,currentTime);
 		}
 
-		printAllPropagation(observedBlocks,observedPropagations);
+		printAllPropagation(observedBlocksGlobal,observedPropagationsGlobal);
 		System.out.println();
 
 		Set<Block> blocks = new HashSet<Block>();
@@ -190,7 +189,7 @@ public class Main {
 		OUT_JSON_FILE.print("{");
 		OUT_JSON_FILE.print(	"\"kind\":\"simulation-end\",");
 		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"timestamp\":" + getCurrentTime());
+		OUT_JSON_FILE.print(		"\"timestamp\":" + currentTime);
 		OUT_JSON_FILE.print(	"}");
 		OUT_JSON_FILE.print("}");
 		OUT_JSON_FILE.print("]"); //end json format
@@ -270,7 +269,7 @@ public class Main {
 		}
 	}
 
-	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes){
+	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes, long currentTime){
 		//List<String> regions = new ArrayList<>(Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN", "AUSTRALIA", "OTHER"));
 		double[] regionDistribution = getRegionDistribution();
 		List<Integer> regionList  = makeRandomList(regionDistribution,false);
@@ -292,10 +291,11 @@ public class Main {
 			OUT_JSON_FILE.flush();
 		}
 		for(Node node: simulatedNodes){
-			node.joinNetwork(simulatedNodes);
+			node.joinNetwork(simulatedNodes,currentTime);
 		}
 
 	}
+
 	/**
 	public static void writeGraph(int j){
 		try {
