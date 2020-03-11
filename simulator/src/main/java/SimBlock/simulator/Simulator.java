@@ -239,7 +239,7 @@ public class Simulator {
 	//
 
 	
-	public static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public  synchronized static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		if(observedBlocks.contains(block)){
 			LinkedHashMap<Integer, Long> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
 			Propagation.put(node.getNodeID(), currentTime - block.getTime());
@@ -256,8 +256,8 @@ public class Simulator {
 		}
 	}
 	
-	public static void printPropagation(Block block, LinkedHashMap<Integer, Long> propagation){
-		System.out.println(block + ":" + block.getHeight());
+	public synchronized  static void printPropagation(Block block, LinkedHashMap<Integer, Long> propagation){
+		//System.out.println(block + ":" + block.getHeight());
 		int printCounter = 0;
 		for(Map.Entry<Integer, Long> timeEntry : propagation.entrySet()){
 			printCounter = printCounter + 1;
@@ -270,14 +270,14 @@ public class Simulator {
 			{
 				Main.myMedian.add(timeEntry.getValue());
 				Main.meanblockpropagationTime = Main.meanblockpropagationTime + timeEntry.getValue();
-				System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
+				//System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
 			}
 
 		}
-		System.out.println();
+		//System.out.println();
 	}
 	
-	public static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public synchronized  static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
 		for(int i=0;i < observedBlocks.size();i++){
 			printPropagation(observedBlocks.get(i), observedPropagations.get(i));
 		}

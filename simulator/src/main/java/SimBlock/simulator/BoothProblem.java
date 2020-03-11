@@ -21,7 +21,7 @@ import static SimBlock.simulator.Timer.*;
 import static SimBlock.simulator.Simulator.*;
 
 
-public class BoothProblem extends AbstractDoubleProblem {
+public class BoothProblem extends AbstractDoubleProblem{
 
     public BoothProblem() {
         setNumberOfVariables(2);
@@ -48,7 +48,7 @@ public class BoothProblem extends AbstractDoubleProblem {
          ArrayList<Node> simulatedNodesGA = new ArrayList<Node>();
          PriorityQueue<Timer.ScheduledTask> taskQueueGA = new PriorityQueue<Timer.ScheduledTask>();
          Map<Task, Timer.ScheduledTask> taskMapGA = new HashMap<Task, Timer.ScheduledTask>();
-        ArrayList<Block> observedBlocks = new ArrayList<Block>();
+         ArrayList<Block> observedBlocks = new ArrayList<Block>();
         ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
         int numberOfVariables = getNumberOfVariables();
         int numberOfObjectives = getNumberOfObjectives();
@@ -94,6 +94,8 @@ public class BoothProblem extends AbstractDoubleProblem {
                 if(j > ENDBLOCKHEIGHT){break;}
                 //if(j%100==0 || j==2) writeGraph(j);
             }
+            //mainGA newMain = new mainGA();
+            //newMain.main (simulatedNodesGA,taskQueueGA,taskMapGA,observedBlocks,observedPropagations,currentTime);
             runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime);
         }
 
@@ -144,9 +146,10 @@ public class BoothProblem extends AbstractDoubleProblem {
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
+
     }
 
-    public double calculateSD(ArrayList <Double> numArray)
+    public synchronized double calculateSD(ArrayList <Double> numArray)
     {
         long sum = 0;
         double standardDeviation = 0;
@@ -160,4 +163,5 @@ public class BoothProblem extends AbstractDoubleProblem {
         }
         return Math.round(Math.sqrt(standardDeviation/length));
     }
+
 }

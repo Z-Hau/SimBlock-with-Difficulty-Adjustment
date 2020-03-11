@@ -21,7 +21,7 @@ import java.util.List;
 import static SimBlock.settings.SimulationConfiguration.runningGA;
 
 public class myNSGAII extends AbstractAlgorithmRunner {
-    public static  ArrayList<Double>  main(String[] args) {
+    public  synchronized static  ArrayList<Double>  main(String[] args) {
         Problem<DoubleSolution> problem;
         Algorithm<List<DoubleSolution>> algorithm;
         CrossoverOperator<DoubleSolution> crossover;
@@ -45,11 +45,11 @@ public class myNSGAII extends AbstractAlgorithmRunner {
         selection = new BinaryTournamentSelection<DoubleSolution>(
                 new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-        int populationSize = 2;
+        int populationSize = 200;
         // 注册
         algorithm = new NSGAIIBuilder<DoubleSolution>(problem, crossover, mutation, populationSize)
                 .setSelectionOperator(selection)
-                .setMaxEvaluations(1)
+                .setMaxEvaluations(100)
                 .build();
         runningGA = true;
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

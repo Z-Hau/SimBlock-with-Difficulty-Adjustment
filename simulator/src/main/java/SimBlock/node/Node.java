@@ -32,24 +32,20 @@ import SimBlock.task.RecMessageTask;
 import SimBlock.task.Task;
 
 public class Node {
-	private int region;
-	private int nodeID;
-	private long miningPower;
-	private AbstractRoutingTable routingTable;
-	//Timer myTimer = new Timer();
-	//Simulator mySim = new Simulator();
+	private volatile int region;
+	private volatile int nodeID;
+	private volatile long miningPower;
+	private volatile AbstractRoutingTable routingTable;
+	private volatile Block block;
+	private volatile Set<Block> orphans = new HashSet<Block>();
 
+	private volatile Task executingTask = null;
 
-	private Block block;
-	private Set<Block> orphans = new HashSet<Block>();
+	private volatile boolean sendingBlock = false;
+	private volatile ArrayList<RecMessageTask> messageQue = new ArrayList<RecMessageTask>();
+	private volatile Set<Block> downloadingBlocks = new HashSet<Block>();
 
-	private Task executingTask = null;
-
-	private boolean sendingBlock = false;
-	private ArrayList<RecMessageTask> messageQue = new ArrayList<RecMessageTask>();
-	private Set<Block> downloadingBlocks = new HashSet<Block>();
-
-	private long processingTime = 2;
+	private volatile long processingTime = 2;
 
 
 	public Node(int nodeID,int nConnection ,int region, long miningPower, String routingTableName){
@@ -89,7 +85,7 @@ public class Node {
 		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
 	}
 
-	public void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
+	public synchronized void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
 		if(this.executingTask != null){
 			removeTask(this.executingTask,taskQueue,taskMap);
 			this.executingTask = null;
@@ -121,20 +117,20 @@ public class Node {
 		}
 	}
 
-	public void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public synchronized void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		Task task = new MiningTask(this);
 		this.executingTask = task;
 		putTask(task,taskQueue,taskMap,currentTime);
 	}
 
-	public void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public synchronized  void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		for(Node to : this.routingTable.getNeighbors()){
 			AbstractMessageTask task = new InvMessageTask(this,to,block);
 			putTask(task, taskQueue, taskMap, currentTime);
 		}
 	}
 
-	public void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public synchronized void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		Block sameHeightBlock;
 
 		if(this.block == null){
@@ -161,7 +157,7 @@ public class Node {
 
 	}
 
-	public void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public synchronized  void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -198,7 +194,7 @@ public class Node {
 	}
 
 	// send a block to the sender of the next queued recMessage
-	public void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public synchronized  void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		if(this.messageQue.size() > 0){
 
 			sendingBlock = true;

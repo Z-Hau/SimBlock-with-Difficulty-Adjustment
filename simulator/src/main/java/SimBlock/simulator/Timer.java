@@ -39,8 +39,8 @@ public class Timer {
 			this.scheduledTime = scheduledTime;
 		}
 
-		private Task getTask(){ return this.task; }
-		private long getScheduledTime(){ return this.scheduledTime; }
+		private synchronized Task getTask(){ return this.task; }
+		private  synchronized  long getScheduledTime(){ return this.scheduledTime; }
 
 		public int compareTo(ScheduledTask o) {
 			if(this.equals(o)) return 0;
@@ -80,7 +80,7 @@ public class Timer {
 	}
 
 
-	public static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public  static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
 		ScheduledTask stask = new ScheduledTask(task, currentTime + task.getInterval());
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
