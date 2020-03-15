@@ -32,32 +32,32 @@ public class Timer {
 
 	public static class ScheduledTask implements Comparable<ScheduledTask> {
 		private final Task task;
-		private final long scheduledTime;
+		private final double scheduledTime;
 
-		private ScheduledTask(Task task, long scheduledTime){
+		private ScheduledTask(Task task, double scheduledTime){
 			this.task = task;
 			this.scheduledTime = scheduledTime;
 		}
 
-		private synchronized Task getTask(){ return this.task; }
-		private  synchronized  long getScheduledTime(){ return this.scheduledTime; }
+		private  Task getTask(){ return this.task; }
+		private   double getScheduledTime(){ return this.scheduledTime; }
 
 		public int compareTo(ScheduledTask o) {
 			if(this.equals(o)) return 0;
-			int order = Long.signum(this.scheduledTime - o.scheduledTime);
+			int order = (int) Math.signum(this.scheduledTime - o.scheduledTime);
 			if(order != 0) return order;
 			order = System.identityHashCode(this) - System.identityHashCode(o);
 			return order;
 		}
 	}
 
-	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public static void runTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentScheduledTask = taskQueue.poll();
 			Task currentTask = currentScheduledTask.getTask();
 			currentTime = currentScheduledTask.getScheduledTime();
 			taskMap.remove(currentTask, currentScheduledTask);
-			currentTask.run(simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
+			currentTask.run(simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime,blockInterval,difficultyInterval,averageDifficulty);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class Timer {
 	}
 
 
-	public  static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public  static void putTask(Task task, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime){
 		ScheduledTask stask = new ScheduledTask(task, currentTime + task.getInterval());
 		taskMap.put(task,stask);
 		taskQueue.add(stask);

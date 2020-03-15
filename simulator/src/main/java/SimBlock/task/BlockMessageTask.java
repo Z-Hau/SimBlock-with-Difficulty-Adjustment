@@ -15,7 +15,6 @@
  */
 package SimBlock.task;
 
-import static SimBlock.simulator.Main.*;
 import static SimBlock.simulator.Network.*;
 import static SimBlock.simulator.Timer.*;
 
@@ -39,25 +38,25 @@ public class BlockMessageTask extends AbstractMessageTask {
 		this.interval = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
 	}
 
-	public long getInterval(){
+	public double getInterval(){
 		return this.interval;
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		this.getFrom().sendNextBlockMessage(taskQueue,taskMap,currentTime);
-		
-		OUT_JSON_FILE.print("{");
-		OUT_JSON_FILE.print(	"\"kind\":\"flow-block\",");
-		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (currentTime - this.interval) + ",");
-		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + currentTime + ",");
-		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getFrom().getNodeID() + ",");
-		OUT_JSON_FILE.print(		"\"end-node-id\":" + getTo().getNodeID() + ",");
-		OUT_JSON_FILE.print(		"\"block-id\":" + block.getId());
-		OUT_JSON_FILE.print(	"}");
-		OUT_JSON_FILE.print("},");
-		OUT_JSON_FILE.flush();
-		super.run(simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
+
+		//OUT_JSON_FILE.print("{");
+		//OUT_JSON_FILE.print(	"\"kind\":\"flow-block\",");
+		//OUT_JSON_FILE.print(	"\"content\":{");
+		//OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (currentTime - this.interval) + ",");
+		//OUT_JSON_FILE.print(		"\"reception-timestamp\":" + currentTime + ",");
+		//OUT_JSON_FILE.print(		"\"begin-node-id\":" + getFrom().getNodeID() + ",");
+		//OUT_JSON_FILE.print(		"\"end-node-id\":" + getTo().getNodeID() + ",");
+		//OUT_JSON_FILE.print(		"\"block-id\":" + block.getId());
+		//OUT_JSON_FILE.print(	"}");
+		//OUT_JSON_FILE.print("},");
+		//OUT_JSON_FILE.flush();
+		super.run(simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
 	}
 
 	public Block getBlock(){

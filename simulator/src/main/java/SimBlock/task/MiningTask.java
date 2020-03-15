@@ -19,7 +19,6 @@ import SimBlock.node.Block;
 import SimBlock.node.Node;
 import SimBlock.simulator.BoothProblem;
 import SimBlock.simulator.ParallelNSGAII;
-import SimBlock.simulator.myNSGAII;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
 import org.uma.jmetal.example.AlgorithmRunner;
@@ -52,63 +51,54 @@ public class MiningTask implements Task {
 	private Block parentBlock;
 	private long interval;
 
-	public MiningTask(Node miningNode) {
+	public MiningTask(Node miningNode, double[] averageDifficulty) {
 		this.miningNode = miningNode;
 		this.parentBlock = miningNode.getBlock();
 
-		double p = 1.0 / getAverageDifficulty();
+		double p = 1.0 / averageDifficulty[0];
 		double u = random.nextDouble();
 		this.interval = (long)(  ( Math.log(u) / Math.log(1.0-p) ) / this.miningNode.getMiningPower() );
 	}
 
 	@Override
-	public long getInterval() {
+	public double getInterval() {
 		return this.interval;
 	}
 
 	@Override
-	public synchronized  void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
-		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , currentTime ,getAverageDifficulty());
-		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
-		long myDifficultyInterval = 0;
-		if(runningGA == false)
-		{
-			myDifficultyInterval = DIFFICULTY_INTERVAL;
-		}
-		else
-		{
-			myDifficultyInterval = GA_DIFFICULTY_INTERVAL;
-			TOTAL_PREVIOUS_BLOCK_HEIGHT = 0;
-		}
-
+	public  void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty) {
+		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , currentTime , averageDifficulty[0]);
+		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
 		if(SIMULATION_TYPE.equals("bitcoin"))
 		{
-			if(myDifficultyInterval != 0)
+			if(difficultyInterval[0] != 0)
 			{
-				if(((this.parentBlock.getHeight()+1)- TOTAL_PREVIOUS_BLOCK_HEIGHT) % myDifficultyInterval == 0)
+				if(runningGA == true)
 				{
-					setBitcoinAverageDifficulty(simulatedNodes);
-					if(runningGA == false)
-					{
+					if((createdBlock.getHeight()-1) % (difficultyInterval[0]) == 0) {
+						setBitcoinAverageDifficulty(createdBlock,blockInterval, difficultyInterval, averageDifficulty);
+					}
+				}
+				else
+				{
+					if(((createdBlock.getHeight()-1)- TOTAL_PREVIOUS_BLOCK_HEIGHT) % (difficultyInterval[0]) == 0) {
+						setBitcoinAverageDifficulty(createdBlock, blockInterval, difficultyInterval, averageDifficulty);
 						System.out.println("Running GA............................................");
 						//runNSGAIII();
 						ParallelNSGAII parallelRunGA = new ParallelNSGAII();
-						ArrayList <Double> myResult = parallelRunGA.main(null);
+						ArrayList<Double> myResult = parallelRunGA.main(null);
 						//myNSGAII runNSGGAII = new myNSGAII();
 						//ArrayList <Double> myResult = runNSGGAII.main(null);
 						runningGA = false;
-						firstGARun = false;
-						INTERVAL = ((new Double(myResult.get(0))).longValue()*1000);
-						OLD_DIFFICULTY_INTERVAL = DIFFICULTY_INTERVAL;
+						firstGARun = true;
+						INTERVAL = ((new Double(myResult.get(0))).longValue() * 1000);
 						TOTAL_PREVIOUS_BLOCK_HEIGHT = this.parentBlock.getHeight();
 						DIFFICULTY_INTERVAL = (new Double(myResult.get(1))).intValue();
 						System.out.println("GA Stopped.............................................");
-						try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\testing-ga.csv", true);
-							BufferedWriter bw = new BufferedWriter(fw);
-							PrintWriter out = new PrintWriter(bw))
-						{
+						try (FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\testing-ga.csv", true);
+							 BufferedWriter bw = new BufferedWriter(fw);
+							 PrintWriter out = new PrintWriter(bw)) {
 							out.println(INTERVAL + "," + DIFFICULTY_INTERVAL + "," + this.parentBlock.getHeight());
-
 
 						} catch (IOException e) {
 							//exception handling left as an exercise for the reader
@@ -119,11 +109,11 @@ public class MiningTask implements Task {
 		}
 		else if (SIMULATION_TYPE.equals("litecoin"))
 		{
-			if(myDifficultyInterval != 0 )
+			if(difficultyInterval[0] != 0 )
 			{
-				if((this.parentBlock.getHeight()+1) % myDifficultyInterval == 0)
+				if((this.parentBlock.getHeight()+1) % difficultyInterval[0] == 0)
 				{
-					setBitcoinAverageDifficulty(simulatedNodes);
+					setBitcoinAverageDifficulty(createdBlock, blockInterval, difficultyInterval, averageDifficulty);
 				}
 			}
 		}

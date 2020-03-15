@@ -34,7 +34,7 @@ public class SimulationConfiguration {
 	public static final long BLOCKSIZE = 535000;//6110(lite);//8000(doge);//535000(bitcoin);//0.5MB
 
 	public static int DIFFICULTY_INTERVAL = 2016; //readjust difficulty once every N block
-	public static int GA_DIFFICULTY_INTERVAL = 1;
+	//public static int GA_DIFFICULTY_INTERVAL = 1;
 	public static final int CHANGE_MINING_POWER_INTERVAL = 0; //1(every block); 0(no changes)
 	public static final double MINING_POWER_INCREASE_PERCENTAGE = 0.5; //the chance to increase
 	public static final double MINING_POWER_CHANGE_RATIO = 0.1; //how much to increase or decrease
@@ -42,7 +42,6 @@ public class SimulationConfiguration {
 
 	public static boolean runningGA = false;
 	public static boolean firstGARun = true;
-	public static int OLD_DIFFICULTY_INTERVAL = 2016;
 	public static int TOTAL_PREVIOUS_BLOCK_HEIGHT = 2016;
 
 }

@@ -16,7 +16,6 @@
 package SimBlock.node;
 
 import static SimBlock.settings.SimulationConfiguration.*;
-import static SimBlock.simulator.Main.*;
 import static SimBlock.simulator.Network.*;
 import static SimBlock.simulator.Simulator.*;
 import static SimBlock.simulator.Timer.*;
@@ -65,27 +64,27 @@ public class Node {
 	public long getMiningPower(){ return this.miningPower; }
 	public void setMiningPower(long miningPower) { this.miningPower = miningPower;}
 	public Set<Block> getOrphans(){ return this.orphans; }
-	public void setRegion(int region){ this.region = region; }
+	//public void setRegion(int region){ this.region = region; }
 	public int getRegion(){ return this.region; }
 
-	public boolean addNeighbor(Node node){ return this.routingTable.addNeighbor(node); }
-	public boolean removeNeighbor(Node node){ return this.routingTable.removeNeighbor(node); }
-	public ArrayList<Node> getNeighbors(){ return this.routingTable.getNeighbors(); }
+	//public boolean addNeighbor(Node node){ return this.routingTable.addNeighbor(node); }
+	//public boolean removeNeighbor(Node node){ return this.routingTable.removeNeighbor(node); }
+	//public ArrayList<Node> getNeighbors(){ return this.routingTable.getNeighbors(); }
 	public AbstractRoutingTable getRoutingTable(){ return this.routingTable; }
 	public void setnConnection(int nConnection){ this.routingTable.setnConnection(nConnection); }
-	public int getnConnection(){ return this.routingTable.getnConnection(); }
+	//public int getnConnection(){ return this.routingTable.getnConnection(); }
 
 
-	public void joinNetwork(ArrayList<Node> simulatedNodes, long currentTime){
+	public void joinNetwork(ArrayList<Node> simulatedNodes, double currentTime){
 		this.routingTable.initTable(simulatedNodes,currentTime);
 	}
 
-	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		Block genesis = new Block(1, null, this, 0,1);
-		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
+		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime, blockInterval, difficultyInterval, averageDifficulty);
 	}
 
-	public synchronized void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime) {
+	public  void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime) {
 		if(this.executingTask != null){
 			removeTask(this.executingTask,taskQueue,taskMap);
 			this.executingTask = null;
@@ -95,16 +94,16 @@ public class Node {
 		arriveBlock(newBlock, this,observedBlocks,observedPropagations,currentTime);
 	}
 
-	private void printAddBlock(Block newBlock, long currentTime){
-		OUT_JSON_FILE.print("{");
-		OUT_JSON_FILE.print(	"\"kind\":\"add-block\",");
-		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"timestamp\":" + currentTime + ",");
-		OUT_JSON_FILE.print(		"\"node-id\":" + this.getNodeID() + ",");
-		OUT_JSON_FILE.print(		"\"block-id\":" + newBlock.getId());
-		OUT_JSON_FILE.print(	"}");
-		OUT_JSON_FILE.print("},");
-		OUT_JSON_FILE.flush();
+	private void printAddBlock(Block newBlock, double currentTime){
+		//OUT_JSON_FILE.print("{");
+		//OUT_JSON_FILE.print(	"\"kind\":\"add-block\",");
+		//OUT_JSON_FILE.print(	"\"content\":{");
+		//OUT_JSON_FILE.print(		"\"timestamp\":" + currentTime + ",");
+		//OUT_JSON_FILE.print(		"\"node-id\":" + this.getNodeID() + ",");
+		//OUT_JSON_FILE.print(		"\"block-id\":" + newBlock.getId());
+		//OUT_JSON_FILE.print(	"}");
+		//OUT_JSON_FILE.print("},");
+		//OUT_JSON_FILE.flush();
 	}
 
 	public void addOrphans(Block newBlock, Block correctBlock){
@@ -117,25 +116,25 @@ public class Node {
 		}
 	}
 
-	public synchronized void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
-		Task task = new MiningTask(this);
+	public  void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+		Task task = new MiningTask(this,averageDifficulty);
 		this.executingTask = task;
 		putTask(task,taskQueue,taskMap,currentTime);
 	}
 
-	public synchronized  void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public  void sendInv(Block block, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime){
 		for(Node to : this.routingTable.getNeighbors()){
 			AbstractMessageTask task = new InvMessageTask(this,to,block);
 			putTask(task, taskQueue, taskMap, currentTime);
 		}
 	}
 
-	public synchronized void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public  void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		Block sameHeightBlock;
 
 		if(this.block == null){
 			this.addToChain(receivedBlock,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
-			this.mining(simulatedNodes,taskQueue,taskMap,currentTime);
+			this.mining(simulatedNodes,taskQueue,taskMap,currentTime,blockInterval,difficultyInterval,averageDifficulty);
 			this.sendInv(receivedBlock,taskQueue,taskMap,currentTime);
 
 		}else if(receivedBlock.getHeight() > this.block.getHeight()){
@@ -144,7 +143,7 @@ public class Node {
 				this.addOrphans(this.block, sameHeightBlock);
 			}
 			this.addToChain(receivedBlock, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
-			this.mining(simulatedNodes, taskQueue, taskMap, currentTime);
+			this.mining(simulatedNodes, taskQueue, taskMap, currentTime, blockInterval, difficultyInterval, averageDifficulty);
 			this.sendInv(receivedBlock, taskQueue, taskMap, currentTime);
 
 		}else if(receivedBlock.getHeight() <= this.block.getHeight()){
@@ -157,7 +156,7 @@ public class Node {
 
 	}
 
-	public synchronized  void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public  void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -189,12 +188,12 @@ public class Node {
 		if(message instanceof BlockMessageTask){
 			Block block = ((BlockMessageTask) message).getBlock();
 			downloadingBlocks.remove(block);
-			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
+			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
 		}
 	}
 
 	// send a block to the sender of the next queued recMessage
-	public synchronized  void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, long currentTime){
+	public   void sendNextBlockMessage(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime){
 		if(this.messageQue.size() > 0){
 
 			sendingBlock = true;

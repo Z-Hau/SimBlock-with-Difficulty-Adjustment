@@ -27,13 +27,14 @@ import static SimBlock.settings.SimulationConfiguration.*;
 
 public class Simulator {
     //private static ArrayList<Node> simulatedNodes = new ArrayList<Node>();
-	private static long targetInterval;// = 1000*60*10;//msec
-	private static long targetIntervalGA;
-	public static double averageDifficulty;
-	public static double averageDifficultyGA;
-	//public Timer myTime = new Timer();
+	//private static long targetInterval;// = 1000*60*10;//msec
+	//private static long targetIntervalGA;
+	//public static double averageDifficulty;
+	//public static double averageDifficultyGA;
+
 
 	//public static ArrayList<Node> getSimulatedNodes(){ return simulatedNodes; }
+	/**
 	public static double getAverageDifficulty()
 	{
 		if(runningGA == false)
@@ -44,16 +45,17 @@ public class Simulator {
 		{
 			return averageDifficultyGA;
 		}
+		return 0;
 
-	}
-	public static double getAverageDifficultyGA(){return averageDifficultyGA;}
-	public static void setTargetIntervalGA(long interval) {targetIntervalGA = interval;}
-	public static void setTargetInterval(long interval){ targetInterval = interval; }
+	}*/
+	//public static double getAverageDifficultyGA(){return averageDifficultyGA;}
+	//public static void setTargetIntervalGA(long interval) {targetIntervalGA = interval;}
+	//public static void setTargetInterval(long interval){ targetInterval = interval; }
 	
-	public static void addNode(Node node, ArrayList<Node> simulatedNodes){
+	public static void addNode(Node node, ArrayList<Node> simulatedNodes, long[] blockInterval, double[] averageDifficulty){
 		simulatedNodes.add(node);
 		//setAverageDifficulty();
-		setInitialDifficulty(simulatedNodes);
+		setInitialDifficulty(simulatedNodes,blockInterval,averageDifficulty);
 	}
 
 	/**
@@ -71,48 +73,23 @@ public class Simulator {
 			existingNode.addNeighbor(node);
 		}
 	}
-	 * @param simulatedNodes*/
+	 * @param blockInterval
+	 * @param difficultyInterval
+	 * @param averageDifficulty   */
 
-	public static void setBitcoinAverageDifficulty(ArrayList<Node> simulatedNodes){
+	public static void setBitcoinAverageDifficulty(Block simulatedBlock, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 
-		int myCounter = 0;
-		int counter = 0;
-		long myTargetInterval = 0;
-		Block myBlock  = simulatedNodes.get(0).getBlock();
+		int myCounter = difficultyInterval[0];
+		Block currentBlock  = simulatedBlock;
+		double currentBlockTime = currentBlock.getTime();
+		Block lastBlock = currentBlock.getBlockWithHeight((currentBlock.getHeight() - (difficultyInterval[0]-1)));
+		double lastBlockTime = lastBlock.getTime();
 		double totalInterval = 0;
-
-		if(runningGA == false)
-		{
-			 myCounter = DIFFICULTY_INTERVAL;
-			 counter = myCounter;
-			 myTargetInterval = targetInterval;
-		}
-		else
-		{
-			 myCounter = GA_DIFFICULTY_INTERVAL;
-			 counter = myCounter;
-			 myTargetInterval = targetIntervalGA ;
-		}
-
 		double minimumDifficulty = 1;
-		double oldDifficulty = 0;
-		if(runningGA == false)
-		{
-			oldDifficulty = getAverageDifficulty();
-		}
-		else
-		{
-			oldDifficulty = getAverageDifficultyGA();
-		}
-		double lastBlockTime = myBlock.getTime();
+		double oldDifficulty = averageDifficulty[0];
 		double nPowTargetTimespan = 0;
-		nPowTargetTimespan	= (myTargetInterval/1000) * myCounter;
-		for (int i = 1; i < (counter - 1) ; i ++)
-		{
-			myBlock = myBlock.getParent();
-		}
-		totalInterval = (lastBlockTime - (myBlock.getTime()))/1000 ; //convert to sec
-
+		nPowTargetTimespan	= (blockInterval[0]) * myCounter;
+		totalInterval = (currentBlockTime - lastBlockTime)/1000;
 		if(totalInterval < (nPowTargetTimespan/4))
 		{
 			totalInterval = nPowTargetTimespan / 4;
@@ -122,30 +99,19 @@ public class Simulator {
 			totalInterval = nPowTargetTimespan * 4;
 		}
 		//System.out.println("total interval = " + totalInterval);
-		//System.out.println("Old average difficulty = " + oldDifficulty);
+		//System.out.println("Old average difficulty = " + averageDifficulty[0]);
 		double newDifficulty = oldDifficulty * nPowTargetTimespan/totalInterval;
 		if(newDifficulty <= minimumDifficulty )
 		{
 			newDifficulty = minimumDifficulty;
 		}
-		//oldDifficulty = 999999999999999999L;
-		//long testing = (long)oldDifficulty * (long)(nPowTargetTimespan/totalInterval);
-		//System.out.println("Testing = " + testing);
-		//System.out.println("New Average difficulty = " + newDifficulty);
-
-		if(runningGA == false)
-		{
-			averageDifficulty = newDifficulty;
-		}
-		else
-		{
-			averageDifficultyGA = newDifficulty;
-		}
-		//System.out.println("Updated new difficulty = " + averageDifficultyGA);
+		averageDifficulty[0] = newDifficulty;
+		//System.out.println("Updated new difficulty = " + averageDifficulty[0]);
 		//System.out.println();
 	}
 
 	public static void setDogecoinAverageDifficulty(ArrayList<Node> simulatedNodes){
+		/**
 		long totalMiningPower = 0;
 		int myCounter = 0;
 		int counter = 0;
@@ -166,7 +132,7 @@ public class Simulator {
 		}
 		else
 		{
-			myCounter = GA_DIFFICULTY_INTERVAL;
+			//myCounter = DIFFICULTY_INTERVAL;
 			counter = myCounter;
 			myTargetInterval = targetIntervalGA;
 		}
@@ -195,10 +161,10 @@ public class Simulator {
 			newDifficulty = minimumDifficulty;
 		}
 		System.out.println("New Average difficulty = " + newDifficulty);
-		averageDifficulty = newDifficulty;
-		System.out.println("Updated new difficulty = " + averageDifficulty);
+		//averageDifficulty = newDifficulty;
+		//System.out.println("Updated new difficulty = " + //averageDifficulty);
 		System.out.println();
-
+		*/
 	}
 
 	/**
@@ -215,55 +181,51 @@ public class Simulator {
 		}
 	}*/
 
-	private static void setInitialDifficulty(ArrayList<Node> simulatedNodes){
+	public static void setInitialDifficulty(ArrayList<Node> simulatedNodes, long[] blockInterval, double[] averageDifficulty){
 		long totalMiningPower = 0;
+		double myDifficulty = 0;
 
 		for(Node node : simulatedNodes){
 			totalMiningPower += node.getMiningPower();
-
 		}
 		//System.out.println("My total mining power = " +totalMiningPower);
 		if(totalMiningPower != 0){
-			if(runningGA == false) {
-				averageDifficulty =  totalMiningPower * targetInterval;
-			}
-			else {
-				averageDifficultyGA = totalMiningPower * targetIntervalGA;
-			}
+			myDifficulty =  totalMiningPower * blockInterval[0];
 		}
+		averageDifficulty[0] = myDifficulty;
 	}
-	
+
 	//
 	// Record block propagation time
 	// For saving memory, Record only the latest 10 Blocks
 	//
-
-	
-	public  synchronized static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations, long currentTime){
+	public   static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime){
 		if(observedBlocks.contains(block)){
-			LinkedHashMap<Integer, Long> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
+			LinkedHashMap<Integer, Double> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
 			Propagation.put(node.getNodeID(), currentTime - block.getTime());
 		}else{
 			if(observedBlocks.size() > 10){
-				printPropagation(observedBlocks.get(0),observedPropagations.get(0));
+				if(runningGA == false)
+				{
+					printPropagation(observedBlocks.get(0),observedPropagations.get(0));
+				}
 				observedBlocks.remove(0);
 				observedPropagations.remove(0);
 			}
-			LinkedHashMap<Integer, Long> propagation = new LinkedHashMap<Integer, Long>();
+			LinkedHashMap<Integer, Double> propagation = new LinkedHashMap<Integer, Double>();
 			propagation.put(node.getNodeID(), currentTime - block.getTime());
 			observedBlocks.add(block);
 			observedPropagations.add(propagation);
 		}
 	}
 	
-	public synchronized  static void printPropagation(Block block, LinkedHashMap<Integer, Long> propagation){
+	public   static void printPropagation(Block block, LinkedHashMap<Integer, Double> propagation){
 		//System.out.println(block + ":" + block.getHeight());
 		int printCounter = 0;
-		for(Map.Entry<Integer, Long> timeEntry : propagation.entrySet()){
+		for(Map.Entry<Integer, Double> timeEntry : propagation.entrySet()){
 			printCounter = printCounter + 1;
 			if(printCounter == (NUM_OF_NODES/2) )
 			{
-
 				Main.midPropagationTime = Main.midPropagationTime + timeEntry.getValue();
 			}
 			if(printCounter%propagation.size() == 0)
@@ -277,7 +239,7 @@ public class Simulator {
 		//System.out.println();
 	}
 	
-	public synchronized  static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Long>> observedPropagations){
+	public   static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations){
 		for(int i=0;i < observedBlocks.size();i++){
 			printPropagation(observedBlocks.get(i), observedPropagations.get(i));
 		}

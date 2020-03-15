@@ -21,7 +21,7 @@ import java.util.List;
 import static SimBlock.settings.SimulationConfiguration.runningGA;
 
 public class myNSGAII extends AbstractAlgorithmRunner {
-    public  synchronized static  ArrayList<Double>  main(String[] args) {
+    public   static  ArrayList<Double>  main(String[] args) {
         Problem<DoubleSolution> problem;
         Algorithm<List<DoubleSolution>> algorithm;
         CrossoverOperator<DoubleSolution> crossover;

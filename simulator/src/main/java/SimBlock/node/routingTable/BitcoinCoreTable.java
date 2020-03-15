@@ -37,7 +37,7 @@ public class BitcoinCoreTable extends AbstractRoutingTable {
 	}
 	
 	// set nConnection random nodes to table
-	public void initTable(ArrayList<Node> simulatedNodes, long currentTime){
+	public void initTable(ArrayList<Node> simulatedNodes, double currentTime){
 	    ArrayList<Integer> candidates = new ArrayList<Integer>();
 	    for(int i = 0 ; i < simulatedNodes.size() ; i++) {
 	    	candidates.add(i);	
@@ -91,27 +91,27 @@ public class BitcoinCoreTable extends AbstractRoutingTable {
 	}
 	
 	private void printAddLink(Node endNode){
-		OUT_JSON_FILE.print("{");
-		OUT_JSON_FILE.print(	"\"kind\":\"add-link\",");
-		OUT_JSON_FILE.print(	"\"content\":{");
+		//OUT_JSON_FILE.print("{");
+		//OUT_JSON_FILE.print(	"\"kind\":\"add-link\",");
+		//OUT_JSON_FILE.print(	"\"content\":{");
 		//OUT_JSON_FILE.print(		"\"timestamp\":" + getCurrentTime() + ",");
-		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
-		OUT_JSON_FILE.print(		"\"end-node-id\":" + endNode.getNodeID());
-		OUT_JSON_FILE.print(	"}");
-		OUT_JSON_FILE.print("},");
-		OUT_JSON_FILE.flush();
+		//OUT_JSON_FILE.print(		"\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
+		//OUT_JSON_FILE.print(		"\"end-node-id\":" + endNode.getNodeID());
+		//OUT_JSON_FILE.print(	"}");
+		//OUT_JSON_FILE.print("},");
+		//OUT_JSON_FILE.flush();
 	}
 	
 	private void printRemoveLink(Node endNode){
-		OUT_JSON_FILE.print("{");
-		OUT_JSON_FILE.print(	"\"kind\":\"remove-link\",");
-		OUT_JSON_FILE.print(	"\"content\":{");
+		//OUT_JSON_FILE.print("{");
+		//OUT_JSON_FILE.print(	"\"kind\":\"remove-link\",");
+		//OUT_JSON_FILE.print(	"\"content\":{");
 		//OUT_JSON_FILE.print(		"\"timestamp\":" + getCurrentTime() + ",");
-		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
-		OUT_JSON_FILE.print(		"\"end-node-id\":" + endNode.getNodeID());
-		OUT_JSON_FILE.print(	"}");
-		OUT_JSON_FILE.print("},");
-		OUT_JSON_FILE.flush();
+		//OUT_JSON_FILE.print(		"\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
+		//OUT_JSON_FILE.print(		"\"end-node-id\":" + endNode.getNodeID());
+		//OUT_JSON_FILE.print(	"}");
+		//OUT_JSON_FILE.print("},");
+		//OUT_JSON_FILE.flush();
 	}
 
 }

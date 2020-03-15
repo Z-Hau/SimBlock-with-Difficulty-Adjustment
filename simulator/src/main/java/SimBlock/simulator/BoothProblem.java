@@ -15,26 +15,18 @@ import org.uma.jmetal.problem.doubleproblem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.doublesolution.DoubleSolution;
 
 import static SimBlock.settings.SimulationConfiguration.*;
-//import static SimBlock.simulator.Main.writeGraph;
 import static SimBlock.simulator.Main.constructNetworkWithAllNode;
 import static SimBlock.simulator.Timer.*;
-import static SimBlock.simulator.Simulator.*;
 
 
 public class BoothProblem extends AbstractDoubleProblem{
 
     public BoothProblem() {
         setNumberOfVariables(2);
-
         setNumberOfObjectives(2);
         setName("BoothProblem");
-
         List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables());
         List<Double> upperLimit = new ArrayList<>(getNumberOfVariables());
-        /*for (int i=0; i<getNumberOfVariables(); i++){
-            lowerLimit.add(-10.0);
-            upperLimit.add(10.0);
-        }*/
         lowerLimit.add(1.0);
         upperLimit.add(600.0);
         lowerLimit.add(1.0);
@@ -49,27 +41,28 @@ public class BoothProblem extends AbstractDoubleProblem{
          PriorityQueue<Timer.ScheduledTask> taskQueueGA = new PriorityQueue<Timer.ScheduledTask>();
          Map<Task, Timer.ScheduledTask> taskMapGA = new HashMap<Task, Timer.ScheduledTask>();
          ArrayList<Block> observedBlocks = new ArrayList<Block>();
-        ArrayList<LinkedHashMap<Integer, Long>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Long>>();
+        ArrayList<LinkedHashMap<Integer, Double>> observedPropagations = new ArrayList<LinkedHashMap<Integer, Double>>();
         int numberOfVariables = getNumberOfVariables();
         int numberOfObjectives = getNumberOfObjectives();
         ArrayList <Double> blocktimeSD = new ArrayList<Double>();
         ArrayList <Double> difficultySD = new ArrayList<Double>();
-        long currentTime = 0L;
+        double currentTime = 0L;
+        long[] blockInterval = {INTERVAL};
+        int[] difficultyInterval = {DIFFICULTY_INTERVAL};
+        double[] averageDifficulty = {0.0};
 
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
 
-        double blockInterval = 0;
-        double difficultyInterval = 0;
 
         int k = getNumberOfVariables() - getNumberOfObjectives() + 1;
 
         if (firstGARun == true)
         {
-            blockInterval = (double) INTERVAL/1000;
-            x[0] = blockInterval;
-            difficultyInterval = (double) DIFFICULTY_INTERVAL;
-            x[1] = difficultyInterval;
+            blockInterval[0] = INTERVAL/1000;
+            x[0] = blockInterval[0];
+            x[1] = (double) DIFFICULTY_INTERVAL;
+            difficultyInterval[0] = DIFFICULTY_INTERVAL;
             firstGARun = false;
         }
         else
@@ -78,14 +71,11 @@ public class BoothProblem extends AbstractDoubleProblem{
             for (int i = 0; i < numberOfVariables; i++) {
                 x[i] =  Math.round(solution.getVariable(i));
             }
-            blockInterval = x[0];
-            difficultyInterval = x[1];
+            blockInterval[0] = (long) (x[0]*1000);
+            difficultyInterval[0] = (int) x[1];
         }
-        setTargetIntervalGA((long) blockInterval*1000);
-        GA_DIFFICULTY_INTERVAL = (int) difficultyInterval;
-        constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA, currentTime);
-        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime);
-
+        constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA, currentTime, blockInterval, averageDifficulty);
+        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
         int j=1;
         while(getTask(simulatedNodesGA,taskQueueGA,taskMapGA) != null){
             if(getTask(simulatedNodesGA, taskQueueGA, taskMapGA) instanceof MiningTask){
@@ -96,7 +86,7 @@ public class BoothProblem extends AbstractDoubleProblem{
             }
             //mainGA newMain = new mainGA();
             //newMain.main (simulatedNodesGA,taskQueueGA,taskMapGA,observedBlocks,observedPropagations,currentTime);
-            runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime);
+            runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
         }
 
         Set<Block> blocks = new HashSet<Block>();
@@ -130,6 +120,7 @@ public class BoothProblem extends AbstractDoubleProblem{
             solution.setObjective(i, f[i]);
             solution.setVariable(i,x[i]);
         }
+
         System.out.println("Block time = " + x[0]);
         System.out.println("Difficulty interval = " + x[1]);
         System.out.println("Obj 1 = " + f[0]);
@@ -142,14 +133,19 @@ public class BoothProblem extends AbstractDoubleProblem{
         {
             out.println(x[0] + "," + x[1] + "," + f[0] + "," + f[1]) ;
 
-
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
-
+        observedPropagations.clear();
+        simulatedNodesGA.clear();
+        taskMapGA.clear();
+        taskQueueGA.clear();
+        observedBlocks.clear();
+        difficultySD.clear();
+        blocktimeSD.clear();
     }
 
-    public synchronized double calculateSD(ArrayList <Double> numArray)
+    public  double calculateSD(ArrayList <Double> numArray)
     {
         long sum = 0;
         double standardDeviation = 0;
