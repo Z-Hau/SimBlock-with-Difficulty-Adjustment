@@ -1,7 +1,4 @@
 # IntelliJ IDEA related files
-*.iml
-*.ipr
-*.iws
 
 # Ecipse related files
 .settings/
