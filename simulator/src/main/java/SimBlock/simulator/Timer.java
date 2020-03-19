@@ -70,7 +70,7 @@ public class Timer {
 		}
 	}
 
-	public static Task getTask(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap){
+	public static Task getTask(PriorityQueue<ScheduledTask> taskQueue){
 		if(taskQueue.size() > 0){
 			ScheduledTask currentTask = taskQueue.peek();
 			return currentTask.getTask();

@@ -79,9 +79,9 @@ public class Node {
 		this.routingTable.initTable(simulatedNodes,currentTime);
 	}
 
-	public void genesisBlock(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+	public void genesisBlock(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, double[] averageDifficulty){
 		Block genesis = new Block(1, null, this, 0,1);
-		this.receiveBlock(genesis,simulatedNodes,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime, blockInterval, difficultyInterval, averageDifficulty);
+		this.receiveBlock(genesis,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime, averageDifficulty);
 	}
 
 	public  void addToChain(Block newBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime) {
@@ -116,7 +116,7 @@ public class Node {
 		}
 	}
 
-	public  void mining(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+	public  void mining(PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, double currentTime, double[] averageDifficulty){
 		Task task = new MiningTask(this,averageDifficulty);
 		this.executingTask = task;
 		putTask(task,taskQueue,taskMap,currentTime);
@@ -129,12 +129,12 @@ public class Node {
 		}
 	}
 
-	public  void receiveBlock(Block receivedBlock, ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+	public  void receiveBlock(Block receivedBlock, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, double[] averageDifficulty){
 		Block sameHeightBlock;
 
 		if(this.block == null){
 			this.addToChain(receivedBlock,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime);
-			this.mining(simulatedNodes,taskQueue,taskMap,currentTime,blockInterval,difficultyInterval,averageDifficulty);
+			this.mining(taskQueue,taskMap,currentTime,averageDifficulty);
 			this.sendInv(receivedBlock,taskQueue,taskMap,currentTime);
 
 		}else if(receivedBlock.getHeight() > this.block.getHeight()){
@@ -143,7 +143,7 @@ public class Node {
 				this.addOrphans(this.block, sameHeightBlock);
 			}
 			this.addToChain(receivedBlock, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime);
-			this.mining(simulatedNodes, taskQueue, taskMap, currentTime, blockInterval, difficultyInterval, averageDifficulty);
+			this.mining(taskQueue, taskMap, currentTime, averageDifficulty);
 			this.sendInv(receivedBlock, taskQueue, taskMap, currentTime);
 
 		}else if(receivedBlock.getHeight() <= this.block.getHeight()){
@@ -153,10 +153,9 @@ public class Node {
 				arriveBlock(receivedBlock, this, observedBlocks, observedPropagations, currentTime);
 			}
 		}
-
 	}
 
-	public  void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Node> simulatedNodes, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+	public  void receiveMessage(AbstractMessageTask message, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, double[] averageDifficulty){
 		Node from = message.getFrom();
 
 		if(message instanceof InvMessageTask){
@@ -188,7 +187,7 @@ public class Node {
 		if(message instanceof BlockMessageTask){
 			Block block = ((BlockMessageTask) message).getBlock();
 			downloadingBlocks.remove(block);
-			this.receiveBlock(block, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
+			this.receiveBlock(block, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, averageDifficulty);
 		}
 	}
 

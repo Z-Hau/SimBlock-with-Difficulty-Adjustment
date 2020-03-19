@@ -42,7 +42,7 @@ public abstract class AbstractMessageTask implements Task{
 	}
 
 	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<Timer.ScheduledTask> taskQueue, Map<Task, Timer.ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
-		this.to.receiveMessage(this,taskQueue,taskMap,simulatedNodes,observedBlocks,observedPropagations,currentTime,blockInterval,difficultyInterval,averageDifficulty);
+		this.to.receiveMessage(this,taskQueue,taskMap,observedBlocks,observedPropagations,currentTime,averageDifficulty);
 	}
 
 }

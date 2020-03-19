@@ -76,6 +76,7 @@ public class Main {
 	}*/
 
 	public static void main(String[] args)  {
+
 		ArrayList<Node> simulatedNodesGlobal = new ArrayList<Node>();
 		PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
 		Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
@@ -92,12 +93,12 @@ public class Main {
 		//OUT_JSON_FILE.flush();
 		//printRegion();
 		constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGlobal,currentTime,blockInterval,averageDifficulty);
-		simulatedNodesGlobal.get(0).genesisBlock(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal,observedBlocksGlobal,observedPropagationsGlobal,currentTime, blockInterval,difficultyInterval,averageDifficulty);
+		simulatedNodesGlobal.get(0).genesisBlock(taskQueueGlobal,taskMapGlobal,observedBlocksGlobal,observedPropagationsGlobal,currentTime,averageDifficulty);
 
 		int j=1;
-		while(getTask(simulatedNodesGlobal,taskQueueGlobal,taskMapGlobal) != null){
-			if(getTask(simulatedNodesGlobal, taskQueueGlobal, taskMapGlobal) instanceof MiningTask){
-				MiningTask task = (MiningTask) getTask(simulatedNodesGlobal, taskQueueGlobal, taskMapGlobal);
+		while(getTask(taskQueueGlobal) != null){
+			if(getTask(taskQueueGlobal) instanceof MiningTask){
+				MiningTask task = (MiningTask) getTask(taskQueueGlobal);
 				if(task.getParent().getHeight() == j) j++;
 				if(j > ENDBLOCKHEIGHT){break;}
 				//if(j%100==0 || j==2) writeGraph(j);

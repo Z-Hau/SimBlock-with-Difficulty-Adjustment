@@ -68,7 +68,7 @@ public class MiningTask implements Task {
 	@Override
 	public  void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty) {
 		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode , currentTime , averageDifficulty[0]);
-		this.miningNode.receiveBlock(createdBlock, simulatedNodes, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
+		this.miningNode.receiveBlock(createdBlock, taskQueue, taskMap, observedBlocks, observedPropagations, currentTime, averageDifficulty);
 		if(SIMULATION_TYPE.equals("bitcoin"))
 		{
 			if(difficultyInterval[0] != 0)
@@ -99,7 +99,6 @@ public class MiningTask implements Task {
 							 BufferedWriter bw = new BufferedWriter(fw);
 							 PrintWriter out = new PrintWriter(bw)) {
 							out.println(INTERVAL + "," + DIFFICULTY_INTERVAL + "," + this.parentBlock.getHeight());
-
 						} catch (IOException e) {
 							//exception handling left as an exercise for the reader
 						}

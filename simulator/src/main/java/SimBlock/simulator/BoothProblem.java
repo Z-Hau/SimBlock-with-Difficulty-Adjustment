@@ -50,7 +50,6 @@ public class BoothProblem extends AbstractDoubleProblem{
         long[] blockInterval = {INTERVAL};
         int[] difficultyInterval = {DIFFICULTY_INTERVAL};
         double[] averageDifficulty = {0.0};
-
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
 
@@ -75,11 +74,11 @@ public class BoothProblem extends AbstractDoubleProblem{
             difficultyInterval[0] = (int) x[1];
         }
         constructNetworkWithAllNode(NUM_OF_NODES,simulatedNodesGA, currentTime, blockInterval, averageDifficulty);
-        simulatedNodesGA.get(0).genesisBlock(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
+        simulatedNodesGA.get(0).genesisBlock(taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime, averageDifficulty);
         int j=1;
-        while(getTask(simulatedNodesGA,taskQueueGA,taskMapGA) != null){
-            if(getTask(simulatedNodesGA, taskQueueGA, taskMapGA) instanceof MiningTask){
-                MiningTask task = (MiningTask) getTask(simulatedNodesGA, taskQueueGA, taskMapGA);
+        while(getTask(taskQueueGA) != null){
+            if(getTask(taskQueueGA) instanceof MiningTask){
+                MiningTask task = (MiningTask) getTask(taskQueueGA);
                 if(task.getParent().getHeight() == j) j++;
                 if(j > ENDBLOCKHEIGHT){break;}
                 //if(j%100==0 || j==2) writeGraph(j);
@@ -88,7 +87,6 @@ public class BoothProblem extends AbstractDoubleProblem{
             //newMain.main (simulatedNodesGA,taskQueueGA,taskMapGA,observedBlocks,observedPropagations,currentTime);
             runTask(simulatedNodesGA,taskQueueGA,taskMapGA, observedBlocks, observedPropagations, currentTime, blockInterval, difficultyInterval, averageDifficulty);
         }
-
         Set<Block> blocks = new HashSet<Block>();
         Block block  = simulatedNodesGA.get(0).getBlock();
 
@@ -136,13 +134,16 @@ public class BoothProblem extends AbstractDoubleProblem{
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
-        observedPropagations.clear();
-        simulatedNodesGA.clear();
-        taskMapGA.clear();
-        taskQueueGA.clear();
-        observedBlocks.clear();
-        difficultySD.clear();
-        blocktimeSD.clear();
+        observedPropagations = null;
+        simulatedNodesGA = null;
+        taskMapGA = null;
+        taskQueueGA = null;
+        observedBlocks = null;
+        difficultySD = null;
+        blocktimeSD = null;
+        blockInterval = null;
+        difficultyInterval  = null;
+        averageDifficulty = null;
     }
 
     public  double calculateSD(ArrayList <Double> numArray)

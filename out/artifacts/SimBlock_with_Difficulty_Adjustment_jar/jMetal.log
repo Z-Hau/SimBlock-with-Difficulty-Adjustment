@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-03-19T11:11:07.613173300Z</date>
+  <millis>1584616267613</millis>
+  <nanos>173300</nanos>
+  <sequence>0</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.JMetalLogger</class>
+  <method>configureLoggers</method>
+  <thread>1</thread>
+  <message>Loggers configured with null</message>
+</record>
+<record>
+  <date>2020-03-19T11:11:07.660045300Z</date>
+  <millis>1584616267660</millis>
+  <nanos>45300</nanos>
+  <sequence>1</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Number of cores: 15</message>
+</record>

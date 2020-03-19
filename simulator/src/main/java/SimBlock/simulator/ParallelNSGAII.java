@@ -106,11 +106,11 @@ public class ParallelNSGAII extends AbstractAlgorithmRunner {
         //selection = new BinaryTournamentSelection<DoubleSolution>(
                // new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-        int populationSize = 100;
+        int populationSize = 200;
         int offspringPopulationSize = populationSize;
 
         //int numberOfCores = 0;
-        Termination termination = new TerminationByEvaluations(50);
+        Termination termination = new TerminationByEvaluations(20);
 
         algorithm =
                 new NSGAII<>(
