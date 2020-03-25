@@ -75,13 +75,13 @@ public class MiningTask implements Task {
 			{
 				if(runningGA == true)
 				{
-					if((createdBlock.getHeight()-1) % (difficultyInterval[0]) == 0) {
+					if((createdBlock.getHeight()) % (difficultyInterval[0]) == 0) {
 						setBitcoinAverageDifficulty(createdBlock,blockInterval, difficultyInterval, averageDifficulty);
 					}
 				}
 				else
 				{
-					if(((createdBlock.getHeight()-1)- TOTAL_PREVIOUS_BLOCK_HEIGHT) % (difficultyInterval[0]) == 0) {
+					if(((createdBlock.getHeight())- TOTAL_PREVIOUS_BLOCK_HEIGHT) % (difficultyInterval[0]) == 0) {
 						setBitcoinAverageDifficulty(createdBlock, blockInterval, difficultyInterval, averageDifficulty);
 						System.out.println("Running GA............................................");
 						//runNSGAIII();
@@ -91,14 +91,16 @@ public class MiningTask implements Task {
 						//ArrayList <Double> myResult = runNSGGAII.main(null);
 						runningGA = false;
 						firstGARun = true;
-						INTERVAL = ((new Double(myResult.get(0))).longValue() * 1000);
-						TOTAL_PREVIOUS_BLOCK_HEIGHT = this.parentBlock.getHeight();
-						DIFFICULTY_INTERVAL = (new Double(myResult.get(1))).intValue();
+						INTERVAL = ((myResult.get(0)).longValue() * 1000);
+						TOTAL_PREVIOUS_BLOCK_HEIGHT = createdBlock.getHeight();
+						DIFFICULTY_INTERVAL = ((myResult.get(1))).intValue() ;
+						blockInterval[0] = INTERVAL;
+						difficultyInterval[0] = DIFFICULTY_INTERVAL;
 						System.out.println("GA Stopped.............................................");
-						try (FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\testing-ga.csv", true);
+						try (FileWriter fw = new FileWriter("C:\\Users\\zihau.chin\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\testing-ga.csv", true);
 							 BufferedWriter bw = new BufferedWriter(fw);
 							 PrintWriter out = new PrintWriter(bw)) {
-							out.println(INTERVAL + "," + DIFFICULTY_INTERVAL + "," + this.parentBlock.getHeight());
+							out.println(INTERVAL + "," + DIFFICULTY_INTERVAL + "," + createdBlock.getHeight());
 						} catch (IOException e) {
 							//exception handling left as an exercise for the reader
 						}

@@ -58,7 +58,7 @@ public class BoothProblem extends AbstractDoubleProblem{
 
         if (firstGARun == true)
         {
-            blockInterval[0] = INTERVAL/1000;
+            blockInterval[0] = INTERVAL;
             x[0] = blockInterval[0];
             x[1] = (double) DIFFICULTY_INTERVAL;
             difficultyInterval[0] = DIFFICULTY_INTERVAL;
@@ -125,7 +125,7 @@ public class BoothProblem extends AbstractDoubleProblem{
         System.out.println("Obj 1 = " + f[1]);
         System.out.println();
 
-        try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\GA-PARAMETERS.csv", true);
+        try(FileWriter fw = new FileWriter("C:\\Users\\zihau.chin\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\GA-PARAMETERS.csv", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out = new PrintWriter(bw))
         {

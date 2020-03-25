@@ -207,7 +207,7 @@ public class Main {
 		System.out.println("My median: " + (totalMedian/1000));
 		System.out.println("Mean block propagation time: "+((meanblockpropagationTime/ENDBLOCKHEIGHT)/1000));
 
-		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\myData.csv", true);
+		try(FileWriter fw = new FileWriter("C:\\Users\\zihau.chin\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\myData.csv", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter out = new PrintWriter(bw))
 		{
