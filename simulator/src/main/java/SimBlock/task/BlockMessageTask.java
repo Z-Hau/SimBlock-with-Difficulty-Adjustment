@@ -30,9 +30,9 @@ import java.util.PriorityQueue;
 public class BlockMessageTask extends AbstractMessageTask {
 
 	private Block block;
-	private long interval;
+	private double interval;
 
-	public BlockMessageTask(Node from, Node to, Block block ,long delay) {
+	public BlockMessageTask(Node from, Node to, Block block , double delay) {
 		super(from, to);
 		this.block = block;
 		this.interval = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
@@ -42,7 +42,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		return this.interval;
 	}
 
-	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
+	public void run(ArrayList<Node> simulatedNodes, PriorityQueue<ScheduledTask> taskQueue, Map<Task, ScheduledTask> taskMap, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double[] currentTime, long[] blockInterval, int[] difficultyInterval, double[] averageDifficulty){
 		this.getFrom().sendNextBlockMessage(taskQueue,taskMap,currentTime);
 
 		//OUT_JSON_FILE.print("{");
