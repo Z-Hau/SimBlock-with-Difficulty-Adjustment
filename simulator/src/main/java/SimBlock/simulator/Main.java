@@ -81,7 +81,7 @@ public class Main {
 		Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
 		ArrayList<Block> observedBlocksGlobal = new ArrayList<Block>();
 		ArrayList<LinkedHashMap<Integer, Double>> observedPropagationsGlobal = new ArrayList<LinkedHashMap<Integer, Double>>();
-		double[] currentTime = {0.0};
+		double currentTime = 0.0;
 		long[] blockInterval = {INTERVAL};
 		int[] difficultyInterval = {DIFFICULTY_INTERVAL};
 		double[] averageDifficulty = {0.0};
@@ -206,7 +206,7 @@ public class Main {
 		System.out.println("My median: " + (totalMedian/1000));
 		System.out.println("Mean block propagation time: "+((meanblockpropagationTime/ENDBLOCKHEIGHT)/1000));
 
-		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\myData.csv", true);
+		try(FileWriter fw = new FileWriter("C:\\Users\\zihau.chin\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\myData.csv", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter out = new PrintWriter(bw))
 		{
@@ -273,7 +273,7 @@ public class Main {
 		 */
 	}
 
-	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes, double[] currentTime, long[] blockInterval, double[] averageDifficulty){
+	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes, double currentTime, long[] blockInterval, double[] averageDifficulty){
 		//List<String> regions = new ArrayList<>(Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN", "AUSTRALIA", "OTHER"));
 		double[] regionDistribution = getRegionDistribution();
 		List<Integer> regionList  = makeRandomList(regionDistribution,false);

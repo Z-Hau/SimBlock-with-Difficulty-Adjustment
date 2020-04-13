@@ -19,6 +19,8 @@ import java.util.Collections;
 
 import SimBlock.node.Node;
 
+import static SimBlock.simulator.Main.*;
+
 public class BitcoinCoreTable extends AbstractRoutingTable {
 	private ArrayList<Node> outbound = new ArrayList<Node>();
 	private ArrayList<Node> inbound = new ArrayList<Node>();
@@ -35,7 +37,7 @@ public class BitcoinCoreTable extends AbstractRoutingTable {
 	}
 	
 	// set nConnection random nodes to table
-	public void initTable(ArrayList<Node> simulatedNodes, double[] currentTime){
+	public void initTable(ArrayList<Node> simulatedNodes, double currentTime){
 	    ArrayList<Integer> candidates = new ArrayList<Integer>();
 	    for(int i = 0 ; i < simulatedNodes.size() ; i++) {
 	    	candidates.add(i);	

@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ArtifactManager">
-    <artifact type="jar" name="simulator:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/simulator_jar</output-path>
-      <root id="archive" name="simulator.jar">
-        <element id="directory" name="META-INF">
-          <element id="file-copy" path="$PROJECT_DIR$/simulator/src/main/resources/META-INF/MANIFEST.MF" />
-        </element>
+    <artifact type="jar" name="SimBlock-with-Difficulty-Adjustment:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/SimBlock_with_Difficulty_Adjustment_jar</output-path>
+      <root id="archive" name="SimBlock-with-Difficulty-Adjustment.jar">
         <element id="module-output" name="simulator" />
-        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-example-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-algorithm-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-problem-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-core-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
         <element id="dir-copy" path="$PROJECT_DIR$/simulator/src/dist/conf" />
-        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-lab-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-auto-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-example-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-problem-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-lab-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-core-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$USER_HOME$/Desktop/jMetal-6.0/jmetal-algorithm-6.0-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
       </root>
     </artifact>
   </component>
@@ -179,7 +176,7 @@
       <module fileurl="file://$PROJECT_DIR$/simulator/simulator.iml" filepath="$PROJECT_DIR$/simulator/simulator.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" default="false" project-jdk-name="13.0.1" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" default="false" project-jdk-name="13.0.2" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SvnBranchConfigurationManager">

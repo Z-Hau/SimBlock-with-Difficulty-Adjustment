@@ -88,8 +88,8 @@ public class Simulator {
 		double minimumDifficulty = 1;
 		double oldDifficulty = averageDifficulty[0];
 		double nPowTargetTimespan = 0;
-		nPowTargetTimespan	= (blockInterval[0]/1000) * myCounter; //convert to second
-		totalInterval = (currentBlockTime - lastBlockTime)/1000; //convert to second
+		nPowTargetTimespan	= (blockInterval[0]) * myCounter;
+		totalInterval = (currentBlockTime - lastBlockTime)/1000;
 		if(totalInterval < (nPowTargetTimespan/4))
 		{
 			totalInterval = nPowTargetTimespan / 4;
@@ -100,18 +100,18 @@ public class Simulator {
 		}
 		if(runningGA == false)
 		{
-			TOTAL_INTERVAL = totalInterval; // in second
+			TOTAL_INTERVAL = totalInterval;
 		}
-		System.out.println("total interval = " + totalInterval);
-		System.out.println("Old average difficulty = " + averageDifficulty[0]);
+		//System.out.println("total interval = " + totalInterval);
+		//System.out.println("Old average difficulty = " + averageDifficulty[0]);
 		double newDifficulty = oldDifficulty * nPowTargetTimespan/totalInterval;
 		if(newDifficulty <= minimumDifficulty )
 		{
 			newDifficulty = minimumDifficulty;
 		}
 		averageDifficulty[0] = newDifficulty;
-		System.out.println("Updated new difficulty = " + averageDifficulty[0]);
-		System.out.println();
+		//System.out.println("Updated new difficulty = " + averageDifficulty[0]);
+		//System.out.println();
 	}
 
 	public static void setDogecoinAverageDifficulty(ArrayList<Node> simulatedNodes){
@@ -203,10 +203,10 @@ public class Simulator {
 	// Record block propagation time
 	// For saving memory, Record only the latest 10 Blocks
 	//
-	public   static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double[] currentTime){
+	public   static void arriveBlock(Block block, Node node, ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations, double currentTime){
 		if(observedBlocks.contains(block)){
 			LinkedHashMap<Integer, Double> Propagation = observedPropagations.get(observedBlocks.indexOf(block));
-			Propagation.put(node.getNodeID(), currentTime[0] - block.getTime());
+			Propagation.put(node.getNodeID(), currentTime - block.getTime());
 		}else{
 			if(observedBlocks.size() > 10){
 				if(runningGA == false)
@@ -217,14 +217,14 @@ public class Simulator {
 				observedPropagations.remove(0);
 			}
 			LinkedHashMap<Integer, Double> propagation = new LinkedHashMap<Integer, Double>();
-			propagation.put(node.getNodeID(), currentTime[0] - block.getTime());
+			propagation.put(node.getNodeID(), currentTime - block.getTime());
 			observedBlocks.add(block);
 			observedPropagations.add(propagation);
 		}
 	}
 	
 	public   static void printPropagation(Block block, LinkedHashMap<Integer, Double> propagation){
-		System.out.println(block + ":" + block.getHeight());
+		//System.out.println(block + ":" + block.getHeight());
 		int printCounter = 0;
 		for(Map.Entry<Integer, Double> timeEntry : propagation.entrySet()){
 			printCounter = printCounter + 1;
@@ -236,11 +236,11 @@ public class Simulator {
 			{
 				Main.myMedian.add(timeEntry.getValue());
 				Main.meanblockpropagationTime = Main.meanblockpropagationTime + timeEntry.getValue();
-				System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
+				//System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
 			}
 
 		}
-		System.out.println();
+		//System.out.println();
 	}
 	
 	public   static void printAllPropagation(ArrayList<Block> observedBlocks, ArrayList<LinkedHashMap<Integer, Double>> observedPropagations){

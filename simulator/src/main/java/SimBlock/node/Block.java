@@ -25,7 +25,7 @@ public class Block {
 	private static int latestId = 0;
 
 
-	public Block(int height, Block parent, Node creator, double generatedTime, double difficulty){
+	public Block(int height, Block parent, Node creator,double generatedTime, double difficulty){
 		this.height = height;
 		this.parent = parent;
 		this.creator = creator;
