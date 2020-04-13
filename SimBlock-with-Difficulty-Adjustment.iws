@@ -7,23 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1cab0d90-f307-4447-bc56-066b920624e4" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/SimBlock-with-Difficulty-Adjustment.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/SimBlock-with-Difficulty-Adjustment.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SimBlock-with-Difficulty-Adjustment.iws" beforeDir="false" afterPath="$PROJECT_DIR$/SimBlock-with-Difficulty-Adjustment.iws" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myData.csv" beforeDir="false" afterPath="$PROJECT_DIR$/myData.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/SimBlock_with_Difficulty_Adjustment_jar/SimBlock-with-Difficulty-Adjustment.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/SimBlock_with_Difficulty_Adjustment_jar/SimBlock-with-Difficulty-Adjustment.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/Block.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/Node.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/routingTable/AbstractRoutingTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/routingTable/AbstractRoutingTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/routingTable/BitcoinCoreTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/node/routingTable/BitcoinCoreTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/settings/SimulationConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/settings/SimulationConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/BoothProblem.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/BoothProblem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Timer.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/simulator/Timer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/AbstractMessageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/AbstractMessageTask.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/BlockMessageTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/BlockMessageTask.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/MiningTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/MiningTask.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/src/main/java/SimBlock/task/Task.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -394,12 +381,12 @@
     </state>
     <state x="488" y="255" width="847" height="605" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1583910470281" />
     <state x="488" y="255" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1584150024289" />
-    <state x="326" y="10" width="1557" height="976" key="find.popup" timestamp="1586792454568">
+    <state x="326" y="10" width="1557" height="976" key="find.popup" timestamp="1586793502646">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="378" y="20" width="1379" height="976" key="find.popup/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1584022869809" />
     <state x="2123" y="137" width="850" height="613" key="find.popup/0.0.1920.1040/1920.0.1440.860@1920.0.1440.860" timestamp="1583979722121" />
-    <state x="326" y="10" width="1557" height="976" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586792454568" />
+    <state x="326" y="10" width="1557" height="976" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586793502646" />
     <state x="966" y="197" width="751" height="743" key="refactoring.ChangeSignatureDialog" timestamp="1586790568553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

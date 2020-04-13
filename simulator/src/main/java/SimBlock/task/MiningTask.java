@@ -52,9 +52,6 @@ public class MiningTask implements Task {
 
 		double p = 1.0 / (averageDifficulty[0]);
 		double u = random.nextDouble();
-		double wtf = Math.log(1.0-p);
-		double wtf1 = Math.log(u);
-		double wtf3 =   Math.log(u) / Math.log(1.0-p);
 		this.interval = (double)(  ( Math.log(u) / Math.log(1.0-p) ) / this.miningNode.getMiningPower() );
 	}
 
