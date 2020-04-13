@@ -85,6 +85,7 @@ public class MiningTask implements Task {
 						setBitcoinAverageDifficulty(createdBlock, blockInterval, difficultyInterval, averageDifficulty);
 						System.out.println("Running GA............................................");
 						//runNSGAIII();
+						/**
 						ParallelNSGAII parallelRunGA = new ParallelNSGAII();
 						ArrayList<Double> myResult = parallelRunGA.main(null);
 						//myNSGAII runNSGGAII = new myNSGAII();
@@ -104,6 +105,7 @@ public class MiningTask implements Task {
 						} catch (IOException e) {
 							//exception handling left as an exercise for the reader
 						}
+						 */
 					}
 				}
 			}
@@ -132,15 +134,16 @@ public class MiningTask implements Task {
 
 		if(CHANGE_MINING_POWER_INTERVAL != 0 )
 		{
-			if((this.parentBlock.getHeight()+1) % CHANGE_MINING_POWER_INTERVAL == 0) //allow user to set when to change the mining power
+			//long totalminingpower = 0L;
+			if(createdBlock.getHeight() % CHANGE_MINING_POWER_INTERVAL == 0) //allow user to set when to change the mining power
 			{
 				for (Node node : simulatedNodes) {
 					//System.out.println("Old mining power = " + node.getMiningPower());
 					node.setMiningPower(randomMiningPower(node.getMiningPower()));
+					//totalminingpower = totalminingpower + node.getMiningPower();
 					//System.out.println("New mining power = " + node.getMiningPower());
-					//System.out.println();
 				}
-				//System.out.println("Increase hash rate");
+				//System.out.println("Mining power = " + totalminingpower);
 			}
 		}
 		/**

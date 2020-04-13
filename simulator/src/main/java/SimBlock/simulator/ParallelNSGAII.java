@@ -23,8 +23,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-import static SimBlock.settings.SimulationConfiguration.TOTAL_PREVIOUS_BLOCK_HEIGHT;
-import static SimBlock.settings.SimulationConfiguration.runningGA;
+import static SimBlock.settings.SimulationConfiguration.*;
 
 /**
 public class ParallelNSGAII extends AbstractAlgorithmRunner {
@@ -95,7 +94,7 @@ public class ParallelNSGAII extends AbstractAlgorithmRunner {
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
         problem = new BoothProblem();
-        JMetalRandom.getInstance().setSeed(TOTAL_PREVIOUS_BLOCK_HEIGHT);
+        JMetalRandom.getInstance().setSeed((long) TOTAL_INTERVAL);
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
         crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
@@ -116,7 +115,7 @@ public class ParallelNSGAII extends AbstractAlgorithmRunner {
         algorithm =
                 new NSGAII<>(
                         problem, populationSize, offspringPopulationSize, crossover, mutation, termination)
-                        .setEvaluation(new MultithreadedEvaluation<>(26));
+                        .setEvaluation(new MultithreadedEvaluation<>(28));
         runningGA = true;
         algorithm.run();
 

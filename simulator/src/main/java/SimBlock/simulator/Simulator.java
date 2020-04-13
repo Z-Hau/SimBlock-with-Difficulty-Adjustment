@@ -98,6 +98,10 @@ public class Simulator {
 		{
 			totalInterval = nPowTargetTimespan * 4;
 		}
+		if(runningGA == false)
+		{
+			TOTAL_INTERVAL = totalInterval;
+		}
 		//System.out.println("total interval = " + totalInterval);
 		//System.out.println("Old average difficulty = " + averageDifficulty[0]);
 		double newDifficulty = oldDifficulty * nPowTargetTimespan/totalInterval;

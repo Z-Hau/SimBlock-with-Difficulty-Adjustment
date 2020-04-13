@@ -50,7 +50,7 @@ public class Node {
 	public Node(int nodeID,int nConnection ,int region, long miningPower, String routingTableName){
 		this.nodeID = nodeID;
 		this.region = region;
-		this.miningPower = miningPower;
+		this.miningPower = (long) miningPower;
 		try {
 			this.routingTable = (AbstractRoutingTable) Class.forName(routingTableName).getConstructor(Node.class).newInstance(this);
 			this.setnConnection(nConnection);

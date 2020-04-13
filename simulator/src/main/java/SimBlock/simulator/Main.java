@@ -76,7 +76,6 @@ public class Main {
 	}*/
 
 	public static void main(String[] args)  {
-
 		ArrayList<Node> simulatedNodesGlobal = new ArrayList<Node>();
 		PriorityQueue<ScheduledTask> taskQueueGlobal = new PriorityQueue<ScheduledTask>();
 		Map<Task,ScheduledTask> taskMapGlobal = new HashMap<Task,ScheduledTask>();
@@ -255,19 +254,23 @@ public class Main {
 		return list;
 	}
 
-	public static int genMiningPower(){
+	public static long genMiningPower(){
 		double r = random.nextGaussian();
-
-		return  Math.max((int)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
+		return Math.max((long)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
 	}
 
 	public static long randomMiningPower(long oldMiningPower) {
-		//double r = random.nextGaussian();
-		if ((random.nextGaussian() <= MINING_POWER_INCREASE_PERCENTAGE)) {
-			return Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
+		double r = random.nextGaussian();
+		return Math.max((long)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
+		/**
+		if ((myRandom.nextDouble() <= MINING_POWER_INCREASE_PERCENTAGE)) {
+			long newMiningPower = Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
+			return Math.max(newMiningPower,1);
 		} else {
-			return Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
+			long newMiningPower = Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
+			return Math.max(newMiningPower,1);
 		}
+		 */
 	}
 
 	public static void constructNetworkWithAllNode(int numNodes, ArrayList<Node> simulatedNodes, double currentTime, long[] blockInterval, double[] averageDifficulty){
