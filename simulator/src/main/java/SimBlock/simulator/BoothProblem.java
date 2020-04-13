@@ -46,7 +46,7 @@ public class BoothProblem extends AbstractDoubleProblem{
         int numberOfObjectives = getNumberOfObjectives();
         ArrayList <Double> blocktimeSD = new ArrayList<Double>();
         ArrayList <Double> difficultySD = new ArrayList<Double>();
-        double currentTime = 0L;
+        double[] currentTime = {0.0};
         long[] blockInterval = {INTERVAL};
         int[] difficultyInterval = {DIFFICULTY_INTERVAL};
         double[] averageDifficulty = {0.0};
