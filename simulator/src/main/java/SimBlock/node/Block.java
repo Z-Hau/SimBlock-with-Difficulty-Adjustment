@@ -19,12 +19,12 @@ public class Block {
 	private int height;
 	private Block parent;
 	private Node creator;
-	private long generatedTime;
+	private double generatedTime;
 	private int id;
 	private static int latestId = 0;
 
 
-	public Block(int height, Block parent, Node creator,long generatedTime){
+	public Block(int height, Block parent, Node creator, double generatedTime){
 		this.height = height;
 		this.parent = parent;
 		this.creator = creator;
@@ -36,7 +36,7 @@ public class Block {
 	public int getHeight(){return this.height;}
 	public Block getParent(){return this.parent;}
 	public Node getCreator(){return this.creator;}
-	public long getTime(){return this.generatedTime;}
+	public double getTime(){return this.generatedTime;}
 	public int getId() {return this.id;}
 
 	// return ancestor block that height is {height}

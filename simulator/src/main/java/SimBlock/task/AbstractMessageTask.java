@@ -28,9 +28,9 @@ public abstract class AbstractMessageTask implements Task{
 	public Node getFrom(){ return this.from; }
 	public Node getTo(){ return this.to; }
 
-	public long getInterval(){
+	public double getInterval(){
 		long latency = getLatency(this.from.getRegion(), this.to.getRegion());
-		return (long)(latency + 10);
+		return (double)(latency + 10);
 	}
 
 	public void run(){

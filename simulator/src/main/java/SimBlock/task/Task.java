@@ -16,6 +16,6 @@
 package SimBlock.task;
 
 public interface Task {
-	public long getInterval();
+	public double getInterval();
 	public void run();
 }

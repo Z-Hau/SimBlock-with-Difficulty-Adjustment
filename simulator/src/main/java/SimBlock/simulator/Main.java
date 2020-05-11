@@ -42,10 +42,12 @@ import SimBlock.task.MiningTask;
 public class Main {
 	public static Random random = new Random(10);
 	public static long time1 = 0;//a value to know the simation time.
-	public static long meanblockpropagationTime = 0;
-	public static long totalMedian = 0;
-	public static long midPropagationTime = 0;
-	public static ArrayList <Long> myMedian = new ArrayList<Long>();
+	public static double meanblockpropagationTime = 0;
+	public static double totalMedian = 0;
+	public static double midPropagationTime = 0;
+	public static List<Double> blockTimeSD = new ArrayList<Double>();
+	public static List<Double> difficultySD = new ArrayList<Double>();
+	public static ArrayList <Double> myMedian = new ArrayList<Double>();
 	public static URI CONF_FILE_URI;
 	public static URI OUT_FILE_URI;
 	static {
@@ -88,9 +90,16 @@ public class Main {
 
 		getSimulatedNodes().get(0).genesisBlock();
 
+		try (FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\testing-ga.csv", true);
+			 BufferedWriter bw = new BufferedWriter(fw);
+			 PrintWriter out = new PrintWriter(bw)) {
+			out.println("INTERVAL" + "," + "DIFFICULTY_INTERVAL" + "," + "GA_START_BLOCK_HEIGHT" + "," + "CURRENT_BLOCK_HEIGHT");
+		} catch (IOException e) {
+			//exception handling left as an exercise for the reader
+		}
+
 		int j=1;
 		while(getTask() != null){
-
 			if(getTask() instanceof MiningTask){
 				MiningTask task = (MiningTask) getTask();
 				if(task.getParent().getHeight() == j) j++;
@@ -102,35 +111,31 @@ public class Main {
 
 
 		printAllPropagation();
-
 		System.out.println();
-
 		Set<Block> blocks = new HashSet<Block>();
 		Block block  = getSimulatedNodes().get(0).getBlock();
 
 		int counter1 = 1;
-		long oldInterval = 0;
-		long newInterval = 0;
-		long myInterval = 0;
-		long totalInterval = 0;
+		double oldInterval = 0;
+		double newInterval = 0;
+		double myInterval = 0;
+		double totalInterval = 0;
 		while(block.getParent() != null){
 			blocks.add(block);
 			oldInterval = block.getTime();
 			block = block.getParent();
 			newInterval = block.getTime();
-
-
 			myInterval = (oldInterval - newInterval)/1000; //convert to second
-			/*
-			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\blockTime.csv", true);
+			blockTimeSD.add(myInterval);
+			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\blockTime.csv", true);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw))
 			{
-				//out.println(myInterval);
+				out.println(myInterval);
 
 			} catch (IOException e) {
 				//exception handling left as an exercise for the reader
-			}*/
+			}
 			//System.out.println(oldInterval+ " - " + newInterval+ " = " + myInterval);
 			totalInterval=totalInterval+myInterval;
 			counter1 = counter1+1;
@@ -153,7 +158,7 @@ public class Main {
 		Collections.sort(blockList, new Comparator<Block>(){
 	        @Override
 	        public int compare(Block a, Block b){
-	          int order = Long.signum(a.getTime() - b.getTime());
+	          int order = (int) Math.signum(a.getTime() - b.getTime());
 	          if(order != 0) return order;
 	          order = System.identityHashCode(a) - System.identityHashCode(b);
 			  return order;
@@ -204,13 +209,12 @@ public class Main {
 		System.out.println("My median: " + (totalMedian/1000));
 		System.out.println("Mean block propagation time: "+((meanblockpropagationTime/ENDBLOCKHEIGHT)/1000));
 
-		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\myData.csv", true);
+		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\new_myData.csv", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter out = new PrintWriter(bw))
 		{
 			out.println(averageorphanSize + "," + averageOrhansSize + "," + (meanblockpropagationTime/ENDBLOCKHEIGHT) + "," + (midPropagationTime/ENDBLOCKHEIGHT) + "," + totalMedian
-					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval/counter1) );
-
+					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval/counter1) + "," + calculateSD(blockTimeSD) + "," + 	calculateSD(difficultySD)  );
 
 		} catch (IOException e) {
 			//exception handling left as an exercise for the reader
@@ -258,13 +262,32 @@ public class Main {
 		return  Math.max((int)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
 	}
 
-	public static long randomMiningPower(long oldMiningPower) {
-		//double r = random.nextGaussian();
-		if ((random.nextGaussian() <= MINING_POWER_INCREASE_PERCENTAGE)) {
-			return Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
-		} else {
-			return Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
+	public static double calculateSD(List <Double> numArray)
+	{
+		long sum = 0;
+		double standardDeviation = 0;
+		int length = numArray.size();
+		for(double num : numArray) {
+			sum += num;
 		}
+		double mean = sum/length;
+		for(double num: numArray) {
+			standardDeviation += Math.pow(num - mean, 2);
+		}
+		return Math.round(Math.sqrt(standardDeviation/length));
+	}
+	public static long randomMiningPower(long oldMiningPower) {
+		double r = random.nextGaussian();
+		return Math.max((long)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
+		/**
+		 if ((myRandom.nextDouble() <= MINING_POWER_INCREASE_PERCENTAGE)) {
+		 long newMiningPower = Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
+		 return Math.max(newMiningPower,1);
+		 } else {
+		 long newMiningPower = Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
+		 return Math.max(newMiningPower,1);
+		 }
+		 */
 	}
 
 	public static void constructNetworkWithAllNode(int numNodes){
@@ -293,14 +316,12 @@ public class Main {
 		for(Node node: getSimulatedNodes()){
 			node.joinNetwork();
 		}
-
 	}
 
 	public static void writeGraph(int j){
 		try {
 			FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./graph/"+ j +".txt")), false);
 			PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
-
             for(int index =1;index<=getSimulatedNodes().size();index++){
     			Node node = getSimulatedNodes().get(index-1);
     			for(int i=0;i<node.getNeighbors().size();i++){

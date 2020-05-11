@@ -133,7 +133,6 @@ public class Node {
 
 	public void receiveBlock(Block receivedBlock){
 		Block sameHeightBlock;
-
 		if(this.block == null){
 			this.addToChain(receivedBlock);
 			this.mining();

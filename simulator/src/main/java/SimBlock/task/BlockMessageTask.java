@@ -25,7 +25,7 @@ import SimBlock.node.Node;
 public class BlockMessageTask extends AbstractMessageTask {
 
 	private Block block;
-	private long interval;
+	private double interval;
 
 	public BlockMessageTask(Node from, Node to, Block block ,long delay) {
 		super(from, to);
@@ -33,7 +33,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		this.interval = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
 	}
 
-	public long getInterval(){
+	public double getInterval(){
 		return this.interval;
 	}
 
