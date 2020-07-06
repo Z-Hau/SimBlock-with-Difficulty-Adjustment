@@ -45,8 +45,6 @@ public class MiningTask implements Task {
 	public void run() {
 		Block createdBlock = new Block(this.parentBlock.getHeight() + 1, this.parentBlock, this.miningNode ,getCurrentTime());
 		this.miningNode.receiveBlock(createdBlock);
-
-
 		if(SIMULATION_TYPE.equals("bitcoin"))
 		{
 			if(DIFFICULTY_INTERVAL != 0)
@@ -86,12 +84,8 @@ public class MiningTask implements Task {
 			if((this.parentBlock.getHeight()+1) % CHANGE_MINING_POWER_INTERVAL == 0) //allow user to set when to change the mining power
 			{
 				for (Node node : getSimulatedNodes()) {
-					//System.out.println("Old mining power = " + node.getMiningPower());
 					node.setMiningPower(randomMiningPower(node.getMiningPower()));
-					//System.out.println("New mining power = " + node.getMiningPower());
-					//System.out.println();
 				}
-				//System.out.println("Increase hash rate");
 			}
 		}
 

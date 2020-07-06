@@ -78,16 +78,11 @@ public class Main {
 	public static void main(String[] args){
 		long start = System.currentTimeMillis();
 		setTargetInterval(INTERVAL);
-
 		OUT_JSON_FILE.print("["); //start json format
 		OUT_JSON_FILE.flush();
-
 		printRegion();
-
 		constructNetworkWithAllNode(NUM_OF_NODES);
-
 		getSimulatedNodes().get(0).genesisBlock();
-
 		int j=1;
 		while(getTask() != null){
 
@@ -102,12 +97,9 @@ public class Main {
 
 
 		printAllPropagation();
-
 		System.out.println();
-
 		Set<Block> blocks = new HashSet<Block>();
 		Block block  = getSimulatedNodes().get(0).getBlock();
-
 		int counter1 = 1;
 		long oldInterval = 0;
 		long newInterval = 0;
@@ -118,24 +110,10 @@ public class Main {
 			oldInterval = block.getTime();
 			block = block.getParent();
 			newInterval = block.getTime();
-
-
 			myInterval = (oldInterval - newInterval)/1000; //convert to second
-			/*
-			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Desktop\\simblock\\blockTime.csv", true);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw))
-			{
-				//out.println(myInterval);
-
-			} catch (IOException e) {
-				//exception handling left as an exercise for the reader
-			}*/
-			//System.out.println(oldInterval+ " - " + newInterval+ " = " + myInterval);
 			totalInterval=totalInterval+myInterval;
 			counter1 = counter1+1;
 		}
-		//System.out.println("My total average interval = " + (totalInterval/counter1));
 
 		Set<Block> orphans = new HashSet<Block>();
 		int averageOrhansSize =0;
@@ -161,7 +139,6 @@ public class Main {
 	    });
 		int counter = 0;
 		for(Block orphan : orphans){
-			//System.out.println(orphan+ ":" +orphan.getHeight());
 			counter = counter + 1;
 		}
 		System.out.println("Average orphan size (simblock) = " +averageOrhansSize);
@@ -210,13 +187,10 @@ public class Main {
 		{
 			out.println(averageorphanSize + "," + averageOrhansSize + "," + (meanblockpropagationTime/ENDBLOCKHEIGHT) + "," + (midPropagationTime/ENDBLOCKHEIGHT) + "," + totalMedian
 					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval/counter1) );
-
-
 		} catch (IOException e) {
 			//exception handling left as an exercise for the reader
 		}
 	}
-
 
 	//TODO　以下の初期生成はシナリオを読み込むようにする予定
 	//ノードを参加させるタスクを作る(ノードの参加と，リンクの貼り始めるタスクは分ける)
@@ -254,13 +228,12 @@ public class Main {
 
 	public static int genMiningPower(){
 		double r = random.nextGaussian();
-
 		return  Math.max((int)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
 	}
 
 	public static long randomMiningPower(long oldMiningPower) {
-		//double r = random.nextGaussian();
-		if ((random.nextGaussian() <= MINING_POWER_INCREASE_PERCENTAGE)) {
+		Random newRandom = new Random();
+		if ((newRandom.nextGaussian() <= MINING_POWER_INCREASE_PERCENTAGE)) {
 			return Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));
 		} else {
 			return Math.round(oldMiningPower / (1 + MINING_POWER_CHANGE_RATIO));
@@ -268,7 +241,6 @@ public class Main {
 	}
 
 	public static void constructNetworkWithAllNode(int numNodes){
-		//List<String> regions = new ArrayList<>(Arrays.asList("NORTH_AMERICA", "EUROPE", "SOUTH_AMERICA", "ASIA_PACIFIC", "JAPAN", "AUSTRALIA", "OTHER"));
 		double[] regionDistribution = getRegionDistribution();
 		List<Integer> regionList  = makeRandomList(regionDistribution,false);
 		double[] degreeDistribution = getDegreeDistribution();
@@ -277,7 +249,6 @@ public class Main {
 		for(int id = 1; id <= numNodes; id++){
 			Node node = new Node(id,degreeList.get(id-1)+1,regionList.get(id-1), genMiningPower(),TABLE);
 			addNode(node);
-
 			OUT_JSON_FILE.print("{");
 			OUT_JSON_FILE.print(	"\"kind\":\"add-node\",");
 			OUT_JSON_FILE.print(	"\"content\":{");
@@ -287,7 +258,6 @@ public class Main {
 			OUT_JSON_FILE.print(	"}");
 			OUT_JSON_FILE.print("},");
 			OUT_JSON_FILE.flush();
-
 		}
 
 		for(Node node: getSimulatedNodes()){

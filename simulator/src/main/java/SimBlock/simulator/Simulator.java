@@ -36,13 +36,11 @@ public class Simulator {
 	
 	public static void addNode(Node node){
 		simulatedNodes.add(node);
-		//setAverageDifficulty();
 		setInitialDifficulty();
 	}
 	
 	public static void removeNode(Node node){
 		simulatedNodes.remove(node);
-		//setAverageDifficulty();
 		setInitialDifficulty();
 	}
 	
@@ -91,10 +89,6 @@ public class Simulator {
 		{
 			newDifficulty = minimumDifficulty;
 		}
-		//oldDifficulty = 999999999999999999L;
-		//long testing = (long)oldDifficulty * (long)(nPowTargetTimespan/totalInterval);
-		//System.out.println("Testing = " + testing);
-		System.out.println("New Average difficulty = " + newDifficulty);
 		averageDifficulty = newDifficulty;
 		System.out.println("Updated new difficulty = " + averageDifficulty);
 		System.out.println();
@@ -134,7 +128,6 @@ public class Simulator {
 		{
 			newDifficulty = minimumDifficulty;
 		}
-		System.out.println("New Average difficulty = " + newDifficulty);
 		averageDifficulty = newDifficulty;
 		System.out.println("Updated new difficulty = " + averageDifficulty);
 		System.out.println();
@@ -159,18 +152,13 @@ public class Simulator {
 
 		for(Node node : simulatedNodes){
 			totalMiningPower += (long) node.getMiningPower();
-
 		}
-		//System.out.println("My total mining power = " +totalMiningPower);
 		if(totalMiningPower != 0){
 			averageDifficulty =  totalMiningPower * targetInterval;
-			//averageDifficulty = 1.0E13;
-
 		}
 	}
 
-	
-	
+
 	//
 	// Record block propagation time
 	// For saving memory, Record only the latest 10 Blocks
