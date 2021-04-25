@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2021-01-02T15:49:30.544622900Z</date>
+  <millis>1609602570544</millis>
+  <nanos>622900</nanos>
+  <sequence>0</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.JMetalLogger</class>
+  <method>configureLoggers</method>
+  <thread>22</thread>
+  <message>Loggers configured with null</message>
+</record>
+<record>
+  <date>2021-01-02T15:49:30.578607Z</date>
+  <millis>1609602570578</millis>
+  <nanos>607000</nanos>
+  <sequence>1</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>22</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T15:51:44.657516700Z</date>
+  <millis>1609602704657</millis>
+  <nanos>516700</nanos>
+  <sequence>2</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>22</thread>
+  <message>Total execution time : 134036ms</message>
+</record>
+<record>
+  <date>2021-01-02T15:51:44.658516400Z</date>
+  <millis>1609602704658</millis>
+  <nanos>516400</nanos>
+  <sequence>3</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>22</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T15:51:44.661513600Z</date>
+  <millis>1609602704661</millis>
+  <nanos>513600</nanos>
+  <sequence>4</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>22</thread>
+  <message>Random seed: 0</message>
+</record>
+<record>
+  <date>2021-01-02T15:51:44.662514400Z</date>
+  <millis>1609602704662</millis>
+  <nanos>514400</nanos>
+  <sequence>5</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>22</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T15:51:44.663514Z</date>
+  <millis>1609602704663</millis>
+  <nanos>514000</nanos>
+  <sequence>6</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>22</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+<record>
+  <date>2021-01-02T15:55:38.787894600Z</date>
+  <millis>1609602938787</millis>
+  <nanos>894600</nanos>
+  <sequence>7</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>34</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T15:57:53.728389900Z</date>
+  <millis>1609603073728</millis>
+  <nanos>389900</nanos>
+  <sequence>8</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>34</thread>
+  <message>Total execution time : 134926ms</message>
+</record>
+<record>
+  <date>2021-01-02T15:57:53.729389300Z</date>
+  <millis>1609603073729</millis>
+  <nanos>389300</nanos>
+  <sequence>9</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>34</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T15:57:53.731386900Z</date>
+  <millis>1609603073731</millis>
+  <nanos>386900</nanos>
+  <sequence>10</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>34</thread>
+  <message>Random seed: 35774</message>
+</record>
+<record>
+  <date>2021-01-02T15:57:53.731386900Z</date>
+  <millis>1609603073731</millis>
+  <nanos>386900</nanos>
+  <sequence>11</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>34</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T15:57:53.732387900Z</date>
+  <millis>1609603073732</millis>
+  <nanos>387900</nanos>
+  <sequence>12</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>34</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+<record>
+  <date>2021-01-02T16:13:41.911604700Z</date>
+  <millis>1609604021911</millis>
+  <nanos>604700</nanos>
+  <sequence>13</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>38</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T16:16:04.752271100Z</date>
+  <millis>1609604164752</millis>
+  <nanos>271100</nanos>
+  <sequence>14</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>38</thread>
+  <message>Total execution time : 142831ms</message>
+</record>
+<record>
+  <date>2021-01-02T16:16:04.752271100Z</date>
+  <millis>1609604164752</millis>
+  <nanos>271100</nanos>
+  <sequence>15</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>38</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T16:16:04.754269800Z</date>
+  <millis>1609604164754</millis>
+  <nanos>269800</nanos>
+  <sequence>16</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>38</thread>
+  <message>Random seed: 213623</message>
+</record>
+<record>
+  <date>2021-01-02T16:16:04.754269800Z</date>
+  <millis>1609604164754</millis>
+  <nanos>269800</nanos>
+  <sequence>17</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>38</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T16:16:04.755269500Z</date>
+  <millis>1609604164755</millis>
+  <nanos>269500</nanos>
+  <sequence>18</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>38</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+<record>
+  <date>2021-01-02T17:23:36.496069700Z</date>
+  <millis>1609608216496</millis>
+  <nanos>69700</nanos>
+  <sequence>19</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>48</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T17:25:50.860843700Z</date>
+  <millis>1609608350860</millis>
+  <nanos>843700</nanos>
+  <sequence>20</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>48</thread>
+  <message>Total execution time : 134358ms</message>
+</record>
+<record>
+  <date>2021-01-02T17:25:50.860843700Z</date>
+  <millis>1609608350860</millis>
+  <nanos>843700</nanos>
+  <sequence>21</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>48</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T17:25:50.862842300Z</date>
+  <millis>1609608350862</millis>
+  <nanos>842300</nanos>
+  <sequence>22</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>48</thread>
+  <message>Random seed: 523372</message>
+</record>
+<record>
+  <date>2021-01-02T17:25:50.862842300Z</date>
+  <millis>1609608350862</millis>
+  <nanos>842300</nanos>
+  <sequence>23</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>48</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T17:25:50.863842400Z</date>
+  <millis>1609608350863</millis>
+  <nanos>842400</nanos>
+  <sequence>24</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>48</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+<record>
+  <date>2021-01-02T17:42:05.217892200Z</date>
+  <millis>1609609325217</millis>
+  <nanos>892200</nanos>
+  <sequence>25</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>58</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T17:44:19.823552Z</date>
+  <millis>1609609459823</millis>
+  <nanos>552000</nanos>
+  <sequence>26</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>58</thread>
+  <message>Total execution time : 134602ms</message>
+</record>
+<record>
+  <date>2021-01-02T17:44:19.823552Z</date>
+  <millis>1609609459823</millis>
+  <nanos>552000</nanos>
+  <sequence>27</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>58</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T17:44:19.824550Z</date>
+  <millis>1609609459824</millis>
+  <nanos>550000</nanos>
+  <sequence>28</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>58</thread>
+  <message>Random seed: 108142</message>
+</record>
+<record>
+  <date>2021-01-02T17:44:19.825548500Z</date>
+  <millis>1609609459825</millis>
+  <nanos>548500</nanos>
+  <sequence>29</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>58</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T17:44:19.825548500Z</date>
+  <millis>1609609459825</millis>
+  <nanos>548500</nanos>
+  <sequence>30</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>58</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+<record>
+  <date>2021-01-02T18:10:38.363037200Z</date>
+  <millis>1609611038363</millis>
+  <nanos>37200</nanos>
+  <sequence>31</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>org.uma.jmetal.util.evaluator.impl.MultithreadedSolutionListEvaluator</class>
+  <method>&lt;init&gt;</method>
+  <thread>68</thread>
+  <message>Number of cores: 10</message>
+</record>
+<record>
+  <date>2021-01-02T18:12:56.263122600Z</date>
+  <millis>1609611176263</millis>
+  <nanos>122600</nanos>
+  <sequence>32</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>68</thread>
+  <message>Total execution time : 137898ms</message>
+</record>
+<record>
+  <date>2021-01-02T18:12:56.263122600Z</date>
+  <millis>1609611176263</millis>
+  <nanos>122600</nanos>
+  <sequence>33</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>68</thread>
+  <message>Number of evaluations: 200</message>
+</record>
+<record>
+  <date>2021-01-02T18:12:56.264142Z</date>
+  <millis>1609611176264</millis>
+  <nanos>142000</nanos>
+  <sequence>34</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>68</thread>
+  <message>Random seed: 144730</message>
+</record>
+<record>
+  <date>2021-01-02T18:12:56.265121800Z</date>
+  <millis>1609611176265</millis>
+  <nanos>121800</nanos>
+  <sequence>35</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>68</thread>
+  <message>Objectives values have been written to file FUN.csv</message>
+</record>
+<record>
+  <date>2021-01-02T18:12:56.265121800Z</date>
+  <millis>1609611176265</millis>
+  <nanos>121800</nanos>
+  <sequence>36</sequence>
+  <logger>org.uma.jmetal.util.JMetalLogger</logger>
+  <level>INFO</level>
+  <class>SimBlock.simulator.ParallelNSGAII</class>
+  <method>main</method>
+  <thread>68</thread>
+  <message>Variables values have been written to file VAR.csv</message>
+</record>
+</log>

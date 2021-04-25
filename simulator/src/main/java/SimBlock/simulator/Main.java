@@ -25,6 +25,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,13 +44,13 @@ import SimBlock.task.MiningTask;
 
 public class Main {
 	public static Random random = new Random(10);
-	public static long time1 = 0;//a value to know the simation time.
-	public static double meanblockpropagationTime = 0;
-	public static double totalMedian = 0;
-	public static double midPropagationTime = 0;
-	public static List<Double> blockTimeSD = new ArrayList<Double>();
-	public static List<Double> difficultySD = new ArrayList<Double>();
-	public static ArrayList <Double> myMedian = new ArrayList<Double>();
+	public static long time1 = 0;//a value to know the simulation time.
+	public static BigDecimal meanblockpropagationTime = BigDecimal.ZERO;
+	public static BigDecimal totalMedian = BigDecimal.ZERO;
+	public static BigDecimal midPropagationTime = BigDecimal.ZERO;
+	public static List<BigDecimal> blockTimeSD = new ArrayList<BigDecimal>();
+	public static List<BigDecimal> difficultySD = new ArrayList<BigDecimal>();
+	public static ArrayList <BigDecimal> myMedian = new ArrayList<BigDecimal>();
 	public static URI CONF_FILE_URI;
 	public static URI OUT_FILE_URI;
 	static {
@@ -97,6 +100,13 @@ public class Main {
 		} catch (IOException e) {
 			//exception handling left as an exercise for the reader
 		}
+		try (FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\difficulty.csv", true);
+			 BufferedWriter bw = new BufferedWriter(fw);
+			 PrintWriter out = new PrintWriter(bw)) {
+			out.println("Old difficulty" + "," + "New difficulty" + "," + "Block height");
+		} catch (IOException e) {
+			//exception handling left as an exercise for the reader
+		}
 
 		int j=1;
 		while(getTask() != null){
@@ -116,16 +126,16 @@ public class Main {
 		Block block  = getSimulatedNodes().get(0).getBlock();
 
 		int counter1 = 1;
-		double oldInterval = 0;
-		double newInterval = 0;
-		double myInterval = 0;
-		double totalInterval = 0;
+		BigDecimal oldInterval;
+		BigDecimal newInterval;
+		BigDecimal myInterval;
+		BigDecimal totalInterval = BigDecimal.ZERO;
 		while(block.getParent() != null){
 			blocks.add(block);
 			oldInterval = block.getTime();
 			block = block.getParent();
 			newInterval = block.getTime();
-			myInterval = (oldInterval - newInterval)/1000; //convert to second
+			myInterval = (oldInterval.subtract(newInterval)).divide(BigDecimal.valueOf(1000),20, RoundingMode.HALF_UP); //convert to second
 			blockTimeSD.add(myInterval);
 			try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\blockTime.csv", true);
 				BufferedWriter bw = new BufferedWriter(fw);
@@ -137,7 +147,7 @@ public class Main {
 				//exception handling left as an exercise for the reader
 			}
 			//System.out.println(oldInterval+ " - " + newInterval+ " = " + myInterval);
-			totalInterval=totalInterval+myInterval;
+			totalInterval=totalInterval.add(myInterval);
 			counter1 = counter1+1;
 		}
 		//System.out.println("My total average interval = " + (totalInterval/counter1));
@@ -158,10 +168,11 @@ public class Main {
 		Collections.sort(blockList, new Comparator<Block>(){
 	        @Override
 	        public int compare(Block a, Block b){
-	          int order = (int) Math.signum(a.getTime() - b.getTime());
-	          if(order != 0) return order;
-	          order = System.identityHashCode(a) - System.identityHashCode(b);
-			  return order;
+	        	BigDecimal forOrder = a.getTime().subtract(b.getTime());
+				int order = forOrder.signum();
+				if(order != 0) return order;
+				order = System.identityHashCode(a) - System.identityHashCode(b);
+				return order;
 	        }
 	    });
 		int counter = 0;
@@ -200,21 +211,21 @@ public class Main {
 		long end = System.currentTimeMillis();
 		time1 += end -start;
 		System.out.println("Elapsed time (ms) = "+time1);
-		System.out.println("Total block propagation time  = " + (meanblockpropagationTime/1000));
+		System.out.println("Total block propagation time  = " + (meanblockpropagationTime.divide(BigDecimal.valueOf(1000),50, RoundingMode.HALF_UP)));
 		Collections.sort(myMedian);
 		int myLength = myMedian.size();
-		totalMedian = (myMedian.get((myLength/2))) + (myMedian.get((myLength/2-1)));
-		totalMedian = totalMedian/2;
-		System.out.println("Median block propagation time: "+((midPropagationTime/ENDBLOCKHEIGHT)/1000));
-		System.out.println("My median: " + (totalMedian/1000));
-		System.out.println("Mean block propagation time: "+((meanblockpropagationTime/ENDBLOCKHEIGHT)/1000));
+		totalMedian = (myMedian.get((myLength/2))).add((myMedian.get((myLength/2-1))));
+		totalMedian = totalMedian.divide(BigDecimal.valueOf(2.0),50, RoundingMode.HALF_UP);
+		System.out.println("Median block propagation time: "+((midPropagationTime.divide(BigDecimal.valueOf(ENDBLOCKHEIGHT),50, RoundingMode.HALF_UP)).divide(BigDecimal.valueOf(1000),50, RoundingMode.HALF_UP)));
+		System.out.println("My median: " + (totalMedian.divide(BigDecimal.valueOf(1000),50, RoundingMode.HALF_UP)));
+		System.out.println("Mean block propagation time: "+((meanblockpropagationTime.divide(BigDecimal.valueOf(ENDBLOCKHEIGHT))).divide(BigDecimal.valueOf(1000))));
 
 		try(FileWriter fw = new FileWriter("C:\\Users\\zihau\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\new_myData.csv", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter out = new PrintWriter(bw))
 		{
-			out.println(averageorphanSize + "," + averageOrhansSize + "," + (meanblockpropagationTime/ENDBLOCKHEIGHT) + "," + (midPropagationTime/ENDBLOCKHEIGHT) + "," + totalMedian
-					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval/counter1) + "," + calculateSD(blockTimeSD) + "," + 	calculateSD(difficultySD)  );
+			out.println(averageorphanSize + "," + averageOrhansSize + "," + (meanblockpropagationTime.divide(BigDecimal.valueOf(ENDBLOCKHEIGHT),50, RoundingMode.HALF_UP)) + "," + (midPropagationTime.divide(BigDecimal.valueOf(ENDBLOCKHEIGHT),50, RoundingMode.HALF_UP)) + "," + totalMedian
+					+ "," + counter + "," + meanblockpropagationTime + "," + (totalInterval.divide(BigDecimal.valueOf(counter1),50, RoundingMode.HALF_UP)) + "," + calculateSD(blockTimeSD) + "," + 	calculateSD(difficultySD) );
 
 		} catch (IOException e) {
 			//exception handling left as an exercise for the reader
@@ -256,29 +267,38 @@ public class Main {
 		return list;
 	}
 
-	public static int genMiningPower(){
+	public static double genMiningPower(){
 		double r = random.nextGaussian();
-
-		return  Math.max((int)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
+		//BigDecimal a = BigDecimal.ONE;
+		//BigDecimal b = BigDecimal.valueOf(r*STDEV_OF_MINING_POWER+AVERAGE_MINING_POWER);
+		//return a.max(b);
+		return Math.max((r*STDEV_OF_MINING_POWER+AVERAGE_MINING_POWER),1);
 	}
 
-	public static double calculateSD(List <Double> numArray)
+	public static BigDecimal calculateSD(List<BigDecimal> numArray)
 	{
-		long sum = 0;
-		double standardDeviation = 0;
-		int length = numArray.size();
-		for(double num : numArray) {
-			sum += num;
+		BigDecimal sum = BigDecimal.ZERO;
+		BigDecimal standardDeviation = BigDecimal.ZERO;
+		BigDecimal length = BigDecimal.valueOf(numArray.size());
+		for(BigDecimal num : numArray) {
+			sum = sum.add(num);
 		}
-		double mean = sum/length;
-		for(double num: numArray) {
-			standardDeviation += Math.pow(num - mean, 2);
+		BigDecimal mean = sum.divide(length,10, RoundingMode.HALF_UP);
+		for(BigDecimal num: numArray) {
+			standardDeviation = standardDeviation.add(num.subtract(mean).pow(2));;
+
 		}
-		return Math.round(Math.sqrt(standardDeviation/length));
+		MathContext mc = new MathContext(10);
+		standardDeviation.divide(length,10, RoundingMode.HALF_UP);
+		return standardDeviation.sqrt(mc);
+
 	}
-	public static long randomMiningPower(long oldMiningPower) {
+	public static double randomMiningPower(double oldMiningPower) {
 		double r = random.nextGaussian();
-		return Math.max((long)(r * STDEV_OF_MINING_POWER + AVERAGE_MINING_POWER),1);
+		//BigDecimal a = BigDecimal.ONE;
+		//BigDecimal b = BigDecimal.valueOf(r*STDEV_OF_MINING_POWER+AVERAGE_MINING_POWER);
+		//return a.max(b);
+		return Math.max((r*STDEV_OF_MINING_POWER+AVERAGE_MINING_POWER),1);
 		/**
 		 if ((myRandom.nextDouble() <= MINING_POWER_INCREASE_PERCENTAGE)) {
 		 long newMiningPower = Math.round(oldMiningPower * (1 + MINING_POWER_CHANGE_RATIO));

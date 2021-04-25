@@ -44,7 +44,7 @@ import static SimBlock.settings.SimulationConfiguration.*;
  // SBX交叉算子
  double crossoverProbability = 0.9;
  double crossoverDistributionIndex = 30.0;
- crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+ crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);b
 
  double mutationProbability = 1.0 / problem.getNumberOfVariables();
  double mutationDistributionIndex = 20.0;
@@ -94,7 +94,7 @@ public class ParallelNSGAII extends AbstractAlgorithmRunner {
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 
         problem = new BoothProblem();
-        JMetalRandom.getInstance().setSeed((long) TOTAL_INTERVAL);
+        JMetalRandom.getInstance().setSeed(TOTAL_INTERVAL.intValue());
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
         crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);

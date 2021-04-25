@@ -15,6 +15,7 @@
  */
 package SimBlock.simulator;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -26,23 +27,25 @@ public class Timer {
 	
 	private static PriorityQueue<ScheduledTask> taskQueue = new PriorityQueue<ScheduledTask>();
 	private static Map<Task,ScheduledTask> taskMap = new HashMap<Task,ScheduledTask>();
-	private static double currentTime = 0L;
+	private static BigDecimal currentTime = BigDecimal.ZERO;
 	
 	private static class ScheduledTask implements Comparable<ScheduledTask> {
 		private final Task task;
-		private final double scheduledTime;
+		private final BigDecimal scheduledTime;
 		
-		private ScheduledTask(Task task, double scheduledTime){
+		private ScheduledTask(Task task, BigDecimal scheduledTime){
 			this.task = task;
 			this.scheduledTime = scheduledTime;
 		}
 		
 		private Task getTask(){ return this.task; }
-		private double getScheduledTime(){ return this.scheduledTime; }
+		private BigDecimal getScheduledTime(){ return this.scheduledTime; }
 		
 		public int compareTo(ScheduledTask o) {
 			if(this.equals(o)) return 0;
-			int order = (int) Math.signum(this.scheduledTime - o.scheduledTime);
+
+			BigDecimal forOrder = this.scheduledTime.subtract(o.scheduledTime);
+			int order = forOrder.signum();
 			if(order != 0) return order;
 			order = System.identityHashCode(this) - System.identityHashCode(o);
 			return order;
@@ -77,16 +80,17 @@ public class Timer {
 	}
 	
 	public static void putTask(Task task){
-		ScheduledTask stask = new ScheduledTask(task, currentTime + task.getInterval());
+		ScheduledTask stask = new ScheduledTask(task, currentTime.add(task.getInterval()) );
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
 	}
-	
+
+	/**
 	public static void putTaskAbsoluteTime(Task task,long time){
 		ScheduledTask stask = new ScheduledTask(task, time);
 		taskMap.put(task,stask);
 		taskQueue.add(stask);
-	}
+	}**/
 	
-	public static double getCurrentTime(){return currentTime;}
+	public static BigDecimal getCurrentTime(){return currentTime;}
 }

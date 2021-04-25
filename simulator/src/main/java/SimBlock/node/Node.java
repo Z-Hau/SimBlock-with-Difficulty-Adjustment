@@ -21,6 +21,7 @@ import static SimBlock.simulator.Network.*;
 import static SimBlock.simulator.Simulator.*;
 import static SimBlock.simulator.Timer.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +36,7 @@ import SimBlock.task.Task;
 public class Node {
 	private int region;
 	private int nodeID;
-	private long miningPower;
+	private double miningPower;
 	private AbstractRoutingTable routingTable;
 
 	private Block block;
@@ -49,7 +50,7 @@ public class Node {
 
 	private long processingTime = 2;
 
-	public Node(int nodeID,int nConnection ,int region, long miningPower, String routingTableName){
+	public Node(int nodeID,int nConnection ,int region, double miningPower, String routingTableName){
 		this.nodeID = nodeID;
 		this.region = region;
 		this.miningPower = miningPower;
@@ -63,8 +64,8 @@ public class Node {
 
 	public int getNodeID(){ return this.nodeID; }
 	public Block getBlock(){ return this.block; }
-	public long getMiningPower(){ return this.miningPower; }
-	public void setMiningPower(long miningPower) { this.miningPower = miningPower;}
+	public double getMiningPower(){ return this.miningPower; }
+	public void setMiningPower(double miningPower) { this.miningPower = miningPower;}
 	public Set<Block> getOrphans(){ return this.orphans; }
 	public void setRegion(int region){ this.region = region; }
 	public int getRegion(){ return this.region; }
@@ -82,7 +83,7 @@ public class Node {
 	}
 
 	public void genesisBlock(){
-		Block genesis = new Block(1, null, this, 0);
+		Block genesis = new Block(1, null, this, BigDecimal.ZERO);
 		this.receiveBlock(genesis);
 	}
 

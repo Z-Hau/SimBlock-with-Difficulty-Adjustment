@@ -15,7 +15,9 @@
  */
 package SimBlock.task;
 
+import java.math.BigDecimal;
+
 public interface Task {
-	public double getInterval();
+	public BigDecimal getInterval();
 	public void run();
 }

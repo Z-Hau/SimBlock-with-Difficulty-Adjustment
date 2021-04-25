@@ -17,6 +17,9 @@ package SimBlock.task;
 import static SimBlock.simulator.Network.*;
 
 import SimBlock.node.Node;
+
+import java.math.BigDecimal;
+
 public abstract class AbstractMessageTask implements Task{
 	private Node from;
 	private Node to;
@@ -28,9 +31,9 @@ public abstract class AbstractMessageTask implements Task{
 	public Node getFrom(){ return this.from; }
 	public Node getTo(){ return this.to; }
 
-	public double getInterval(){
+	public BigDecimal getInterval(){
 		long latency = getLatency(this.from.getRegion(), this.to.getRegion());
-		return (double)(latency + 10);
+		return BigDecimal.valueOf(latency + 10);
 	}
 
 	public void run(){

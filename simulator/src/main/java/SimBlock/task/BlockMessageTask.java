@@ -22,18 +22,21 @@ import static SimBlock.simulator.Timer.*;
 import SimBlock.node.Block;
 import SimBlock.node.Node;
 
+import java.math.BigDecimal;
+
+
 public class BlockMessageTask extends AbstractMessageTask {
 
 	private Block block;
-	private double interval;
+	private BigDecimal interval;
 
 	public BlockMessageTask(Node from, Node to, Block block ,long delay) {
 		super(from, to);
 		this.block = block;
-		this.interval = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
+		this.interval = BigDecimal.valueOf(getLatency(this.getFrom().getRegion(), this.getTo().getRegion())).add(BigDecimal.valueOf(delay)) ;
 	}
 
-	public double getInterval(){
+	public BigDecimal getInterval(){
 		return this.interval;
 	}
 
@@ -43,7 +46,7 @@ public class BlockMessageTask extends AbstractMessageTask {
 		OUT_JSON_FILE.print("{");
 		OUT_JSON_FILE.print(	"\"kind\":\"flow-block\",");
 		OUT_JSON_FILE.print(	"\"content\":{");
-		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (getCurrentTime() - this.interval) + ",");
+		OUT_JSON_FILE.print(		"\"transmission-timestamp\":" + (getCurrentTime().subtract(this.interval)) + ",");
 		OUT_JSON_FILE.print(		"\"reception-timestamp\":" + getCurrentTime() + ",");
 		OUT_JSON_FILE.print(		"\"begin-node-id\":" + getFrom().getNodeID() + ",");
 		OUT_JSON_FILE.print(		"\"end-node-id\":" + getTo().getNodeID() + ",");

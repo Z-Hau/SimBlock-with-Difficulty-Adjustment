@@ -15,16 +15,18 @@
  */
 package SimBlock.node;
 
+import java.math.BigDecimal;
+
 public class Block {
 	private int height;
 	private Block parent;
 	private Node creator;
-	private double generatedTime;
+	private BigDecimal generatedTime;
 	private int id;
 	private static int latestId = 0;
 
 
-	public Block(int height, Block parent, Node creator, double generatedTime){
+	public Block(int height, Block parent, Node creator, BigDecimal generatedTime){
 		this.height = height;
 		this.parent = parent;
 		this.creator = creator;
@@ -36,7 +38,7 @@ public class Block {
 	public int getHeight(){return this.height;}
 	public Block getParent(){return this.parent;}
 	public Node getCreator(){return this.creator;}
-	public double getTime(){return this.generatedTime;}
+	public BigDecimal getTime(){return this.generatedTime;}
 	public int getId() {return this.id;}
 
 	// return ancestor block that height is {height}

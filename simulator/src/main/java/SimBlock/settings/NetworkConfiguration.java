@@ -39,22 +39,18 @@ public class NetworkConfiguration {
 		{198, 237, 325,  85,  58, 198},
 		{151, 252, 301,  58,  12, 126},
 		{189, 294, 322, 198, 126,  16}};
-
 	public static final long[][] LATENCY = LATENCY_2019;
-	
 
 	// Download bandwidth in each region, and last element is Inter-regional bandwidth
 	// Unit: bit per second
 	private static final long[] DOWNLOAD_BANDWIDTH_2015 = {25000000, 24000000, 6500000, 10000000, 17500000, 14000000, 6 * 1000000};
 	private static final long[] DOWNLOAD_BANDWIDTH_2019 = {52000000, 40000000, 18000000, 22800000, 22800000, 29900000, 6 * 1000000};
-
 	public static final long[] DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2019;
 
 	// Upload bandwidth in each region, and last element is Inter-regional bandwidth
 	// Unit: bit per second
 	private static final long[] UPLOAD_BANDWIDTH_2015 =  { 4700000,  8100000, 1800000,  5300000,  3400000,  5200000, 6 * 1000000};
 	private static final long[] UPLOAD_BANDWIDTH_2019 =  { 19200000,  20700000, 5800000,  15700000,  10200000,  11300000, 6 * 1000000};
-
 	public static final long[] UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2019;
 
 	// Each value means the rate of the number of nodes in the corresponding region to the number of all nodes.
@@ -64,10 +60,9 @@ public class NetworkConfiguration {
 	private static final double[] REGION_DISTRIBUTION_DOGECOIN     = { 0.3924, 0.4879, 0.0212, 0.0697, 0.0106, 0.0182};
 	public static final double[] REGION_DISTRIBUTION = REGION_DISTRIBUTION_BITCOIN_2019;
 
+	// The cumulative distribution of number of outbound links
 	private static final double[] DEGREE_DISTRIBUTION_BITCOIN_2015 = {0.025,0.050,0.075,0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80,0.85,0.90,0.95,0.97,0.97,0.98,0.99,0.995,1.0};
 	private static final double[] DEGREE_DISTRIBUTION_LITECOIN     = {0.01,0.02,0.04,0.07,0.09,0.14,0.20,0.28,0.39,0.5,0.6,0.69,0.76,0.81,0.85,0.87,0.89,0.92,0.93,1.0};
 	private static final double[] DEGREE_DISTRIBUTION_DOGECOIN     = {0.00,0.00,0.00,0.00,0.00,0.00,0.00,1.0,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.00,1.0};
-
-
 	public static final double[] DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_BITCOIN_2015;
 }
