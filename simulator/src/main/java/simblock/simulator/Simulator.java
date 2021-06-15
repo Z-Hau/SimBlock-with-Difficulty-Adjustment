@@ -18,11 +18,14 @@ package simblock.simulator;
 
 import static simblock.simulator.Timer.getCurrentTime;
 
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import simblock.block.Block;
 import simblock.node.Node;
+
+import static simblock.settings.SimulationConfiguration.*;
 
 
 /**
@@ -171,8 +174,18 @@ public class Simulator {
     // Print block and its height
     //TODO block does not have a toString method, what is printed here
     System.out.println(block + ":" + block.getHeight());
+    int printCounter = 0;
     for (Map.Entry<Integer, Long> timeEntry : propagation.entrySet()) {
-      System.out.println(timeEntry.getKey() + "," + timeEntry.getValue());
+      printCounter = printCounter + 1;
+      if(printCounter == (NUM_OF_NODES/2) ) {
+        Main.midPropagationTime = Main.midPropagationTime + timeEntry.getValue();
+      }
+      if(printCounter%propagation.size() == 0) {
+        Main.myMedian.add(timeEntry.getValue());
+        Main.meanBlockPropagationTime = Main.meanBlockPropagationTime + timeEntry.getValue();
+        System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
+      }
+
     }
     System.out.println();
   }

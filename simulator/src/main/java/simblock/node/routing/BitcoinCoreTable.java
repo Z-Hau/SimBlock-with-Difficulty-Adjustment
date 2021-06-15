@@ -153,28 +153,28 @@ public class BitcoinCoreTable extends AbstractRoutingTable {
 
   //TODO add example
   private void printAddLink(Node endNode) {
-    OUT_JSON_FILE.print("{");
-    OUT_JSON_FILE.print("\"kind\":\"add-link\",");
-    OUT_JSON_FILE.print("\"content\":{");
-    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime() + ",");
-    OUT_JSON_FILE.print("\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
-    OUT_JSON_FILE.print("\"end-node-id\":" + endNode.getNodeID());
-    OUT_JSON_FILE.print("}");
-    OUT_JSON_FILE.print("},");
-    OUT_JSON_FILE.flush();
+//    OUT_JSON_FILE.print("{");
+//    OUT_JSON_FILE.print("\"kind\":\"add-link\",");
+//    OUT_JSON_FILE.print("\"content\":{");
+//    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime() + ",");
+//    OUT_JSON_FILE.print("\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
+//    OUT_JSON_FILE.print("\"end-node-id\":" + endNode.getNodeID());
+//    OUT_JSON_FILE.print("}");
+//    OUT_JSON_FILE.print("},");
+//    OUT_JSON_FILE.flush();
   }
 
   //TODO add example
   private void printRemoveLink(Node endNode) {
-    OUT_JSON_FILE.print("{");
-    OUT_JSON_FILE.print("\"kind\":\"remove-link\",");
-    OUT_JSON_FILE.print("\"content\":{");
-    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime() + ",");
-    OUT_JSON_FILE.print("\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
-    OUT_JSON_FILE.print("\"end-node-id\":" + endNode.getNodeID());
-    OUT_JSON_FILE.print("}");
-    OUT_JSON_FILE.print("},");
-    OUT_JSON_FILE.flush();
+//    OUT_JSON_FILE.print("{");
+//    OUT_JSON_FILE.print("\"kind\":\"remove-link\",");
+//    OUT_JSON_FILE.print("\"content\":{");
+//    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime() + ",");
+//    OUT_JSON_FILE.print("\"begin-node-id\":" + getSelfNode().getNodeID() + ",");
+//    OUT_JSON_FILE.print("\"end-node-id\":" + endNode.getNodeID());
+//    OUT_JSON_FILE.print("}");
+//    OUT_JSON_FILE.print("},");
+//    OUT_JSON_FILE.flush();
   }
 
 }

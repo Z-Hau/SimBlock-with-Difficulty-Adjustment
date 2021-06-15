@@ -24,7 +24,7 @@ public class SimulationConfiguration {
    * The number of nodes participating in the blockchain network.
    */
   //TODO revert
-  public static final int NUM_OF_NODES = 300;//600;//800;//6000;
+  public static final int NUM_OF_NODES = 9000;//600;//800;//6000;
   // public static final int NUM_OF_NODES = 600;//600;//800;//6000;
 
   /**
@@ -78,7 +78,7 @@ public class SimulationConfiguration {
    */
   //TODO revert
   //public static final int END_BLOCK_HEIGHT = 100;
-  public static final int END_BLOCK_HEIGHT = 3;
+  public static final int END_BLOCK_HEIGHT = 10000;
 
   /**
    * Block size. (unit: byte).
@@ -90,9 +90,9 @@ public class SimulationConfiguration {
    */
   public static final float CBR_USAGE_RATE = 0.964f;
   /**
-   * The rate of nodes that cause churn.
+   * The rate of nodes that cause churn. 0.976f
    */
-  public static final float CHURN_NODE_RATE = 0.976f;
+  public static final float CHURN_NODE_RATE = 1f;
   /**
    * Compact block size. (unit: byte)
    */

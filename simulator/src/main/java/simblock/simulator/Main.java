@@ -36,6 +36,7 @@ import static simblock.simulator.Simulator.setTargetInterval;
 import static simblock.simulator.Timer.getCurrentTime;
 import static simblock.simulator.Timer.getTask;
 import static simblock.simulator.Timer.runTask;
+import static simblock.settings.SimulationConfiguration.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,6 +64,7 @@ public class Main {
    * The constant to be used as the simulation seed.
    */
   public static Random random = new Random(10);
+  
 
   /**
    * The initial simulation time.
@@ -76,6 +78,13 @@ public class Main {
    * Output path.
    */
   public static URI OUT_FILE_URI;
+
+  public static double meanBlockPropagationTime = 0;
+  public static double totalMedian = 0;
+  public static double midPropagationTime = 0;
+  public static List<Double> blockTimeSD = new ArrayList<Double>();
+  public static List<Double> difficultySD = new ArrayList<Double>();
+  public static ArrayList <Long> myMedian = new ArrayList<Long>();
 
   static {
     try {
@@ -116,11 +125,12 @@ public class Main {
    */
   public static void main(String[] args) {
     final long start = System.currentTimeMillis();
+
     setTargetInterval(INTERVAL);
 
     //start json format
-    OUT_JSON_FILE.print("[");
-    OUT_JSON_FILE.flush();
+    //OUT_JSON_FILE.print("[");
+    //OUT_JSON_FILE.flush();
 
     // Log regions
     printRegion();
@@ -162,10 +172,19 @@ public class Main {
     // Get the latest block from the first simulated node
     Block block = getSimulatedNodes().get(0).getBlock();
 
+    int counter1 = 1;
+    double oldInterval = 0;
+    double newInterval = 0;
+    double myInterval = 0;
+    double totalInterval = 0;
     //Update the list of known blocks by adding the parents of the aforementioned block
     while (block.getParent() != null) {
       blocks.add(block);
       block = block.getParent();
+      newInterval = block.getTime();
+      myInterval = (oldInterval - newInterval)/1000; //convert to second
+      totalInterval=totalInterval+myInterval;
+      counter1 = counter1+1;
     }
 
     Set<Block> orphans = new HashSet<>();
@@ -197,7 +216,7 @@ public class Main {
     for (Block orphan : orphans) {
       System.out.println(orphan + ":" + orphan.getHeight());
     }
-    System.out.println(averageOrphansSize);
+    System.out.println("Average orphan size (simblock) = " + averageOrphansSize);
 
     /*
     Log in format:
@@ -223,21 +242,39 @@ public class Main {
       ex.printStackTrace();
     }
 
-    OUT_JSON_FILE.print("{");
-    OUT_JSON_FILE.print("\"kind\":\"simulation-end\",");
-    OUT_JSON_FILE.print("\"content\":{");
-    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime());
-    OUT_JSON_FILE.print("}");
-    OUT_JSON_FILE.print("}");
-    //end json format
-    OUT_JSON_FILE.print("]");
-    OUT_JSON_FILE.close();
-
+//    OUT_JSON_FILE.print("{");
+//    OUT_JSON_FILE.print("\"kind\":\"simulation-end\",");
+//    OUT_JSON_FILE.print("\"content\":{");
+//    OUT_JSON_FILE.print("\"timestamp\":" + getCurrentTime());
+//    OUT_JSON_FILE.print("}");
+//    OUT_JSON_FILE.print("}");
+//    //end json format
+//    OUT_JSON_FILE.print("]");
+//    OUT_JSON_FILE.close();
 
     long end = System.currentTimeMillis();
     simulationTime += end - start;
     // Log simulation time in milliseconds
-    System.out.println(simulationTime);
+    System.out.println("Elapsed time (ms) = " + simulationTime);
+
+    Collections.sort(myMedian);
+    int myLength = myMedian.size();
+    totalMedian = (myMedian.get((myLength/2))) + (myMedian.get((myLength/2-1)));
+    totalMedian = totalMedian/2;
+    System.out.println("Median block propagation time: "+((midPropagationTime/END_BLOCK_HEIGHT)/1000));
+    System.out.println("My median: " + (totalMedian/1000));
+    System.out.println("Mean block propagation time: "+((meanBlockPropagationTime/END_BLOCK_HEIGHT)/1000));
+
+    try(FileWriter fw = new FileWriter("E:\\Github\\simblock\\myData.csv", true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter out = new PrintWriter(bw))
+    {
+      out.println(averageOrphansSize + "," + (meanBlockPropagationTime/END_BLOCK_HEIGHT) + "," + (midPropagationTime/END_BLOCK_HEIGHT) + "," + totalMedian
+              + "," + meanBlockPropagationTime + "," + (totalInterval/counter1));
+
+    } catch (IOException e) {
+      //exception handling left as an exercise for the reader
+    }
 
   }
 
@@ -348,15 +385,15 @@ public class Main {
       // Add the node to the list of simulated nodes
       addNode(node);
 
-      OUT_JSON_FILE.print("{");
-      OUT_JSON_FILE.print("\"kind\":\"add-node\",");
-      OUT_JSON_FILE.print("\"content\":{");
-      OUT_JSON_FILE.print("\"timestamp\":0,");
-      OUT_JSON_FILE.print("\"node-id\":" + id + ",");
-      OUT_JSON_FILE.print("\"region-id\":" + regionList.get(id - 1));
-      OUT_JSON_FILE.print("}");
-      OUT_JSON_FILE.print("},");
-      OUT_JSON_FILE.flush();
+//      OUT_JSON_FILE.print("{");
+//      OUT_JSON_FILE.print("\"kind\":\"add-node\",");
+//      OUT_JSON_FILE.print("\"content\":{");
+//      OUT_JSON_FILE.print("\"timestamp\":0,");
+//      OUT_JSON_FILE.print("\"node-id\":" + id + ",");
+//      OUT_JSON_FILE.print("\"region-id\":" + regionList.get(id - 1));
+//      OUT_JSON_FILE.print("}");
+//      OUT_JSON_FILE.print("},");
+//      OUT_JSON_FILE.flush();
 
     }
 
