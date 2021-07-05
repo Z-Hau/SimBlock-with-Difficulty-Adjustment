@@ -173,7 +173,7 @@ public class Simulator {
   public static void printPropagation(Block block, LinkedHashMap<Integer, Long> propagation) {
     // Print block and its height
     //TODO block does not have a toString method, what is printed here
-    System.out.println(block + ":" + block.getHeight());
+    //System.out.println(block + ":" + block.getHeight());
     int printCounter = 0;
     for (Map.Entry<Integer, Long> timeEntry : propagation.entrySet()) {
       printCounter = printCounter + 1;
@@ -183,11 +183,11 @@ public class Simulator {
       if(printCounter%propagation.size() == 0) {
         Main.myMedian.add(timeEntry.getValue());
         Main.meanBlockPropagationTime = Main.meanBlockPropagationTime + timeEntry.getValue();
-        System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
+        //System.out.println("node id = " + timeEntry.getKey() + ", " + "propagation time = " + timeEntry.getValue());
       }
 
     }
-    System.out.println();
+    //System.out.println();
   }
 
   /**

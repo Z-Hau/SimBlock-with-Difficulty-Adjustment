@@ -123,100 +123,103 @@ public class Main {
    *
    * @param args the input arguments
    */
-  public static void main(String[] args) {
-    final long start = System.currentTimeMillis();
+  public static void main(String [] args) {
 
-    setTargetInterval(INTERVAL);
+      NUM_OF_NODES = Integer.parseInt(args[0]);
+      System.out.println("Number of nodes: " + NUM_OF_NODES);
+      final long start = System.currentTimeMillis();
+      setTargetInterval(INTERVAL);
 
-    //start json format
-    //OUT_JSON_FILE.print("[");
-    //OUT_JSON_FILE.flush();
+      //start json format
+      //OUT_JSON_FILE.print("[");
+      //OUT_JSON_FILE.flush();
 
-    // Log regions
-    printRegion();
+      // Log regions
+      printRegion();
 
-    // Setup network
-    constructNetworkWithAllNodes(NUM_OF_NODES);
+      // Setup network
+      constructNetworkWithAllNodes(NUM_OF_NODES);
 
-    // Initial block height, we stop at END_BLOCK_HEIGHT
-    int currentBlockHeight = 1;
+      // Initial block height, we stop at END_BLOCK_HEIGHT
+      int currentBlockHeight = 1;
 
-    // Iterate over tasks and handle
-    while (getTask() != null) {
-      if (getTask() instanceof AbstractMintingTask) {
-        AbstractMintingTask task = (AbstractMintingTask) getTask();
-        if (task.getParent().getHeight() == currentBlockHeight) {
-          currentBlockHeight++;
+      // Iterate over tasks and handle
+      while (getTask() != null) {
+        if (getTask() instanceof AbstractMintingTask) {
+          AbstractMintingTask task = (AbstractMintingTask) getTask();
+          if (task.getParent().getHeight() == currentBlockHeight) {
+            currentBlockHeight++;
+          }
+          if (currentBlockHeight > END_BLOCK_HEIGHT) {
+            break;
+          }
+          // Log every 100 blocks and at the second block
+          // TODO use constants here
+          if (currentBlockHeight % 100 == 0 || currentBlockHeight == 2) {
+            writeGraph(currentBlockHeight);
+          }
         }
-        if (currentBlockHeight > END_BLOCK_HEIGHT) {
-          break;
-        }
-        // Log every 100 blocks and at the second block
-        // TODO use constants here
-        if (currentBlockHeight % 100 == 0 || currentBlockHeight == 2) {
-          writeGraph(currentBlockHeight);
-        }
+        // Execute task
+        runTask();
       }
-      // Execute task
-      runTask();
-    }
 
-    // Print propagation information about all blocks
-    printAllPropagation();
+      // Print propagation information about all blocks
+      printAllPropagation();
 
-    //TODO logger
-    System.out.println();
+      //TODO logger
+      System.out.println();
 
-    Set<Block> blocks = new HashSet<>();
+      Set<Block> blocks = new HashSet<>();
 
-    // Get the latest block from the first simulated node
-    Block block = getSimulatedNodes().get(0).getBlock();
+      // Get the latest block from the first simulated node
+      Block block = getSimulatedNodes().get(0).getBlock();
 
-    int counter1 = 1;
-    double oldInterval = 0;
-    double newInterval = 0;
-    double myInterval = 0;
-    double totalInterval = 0;
-    //Update the list of known blocks by adding the parents of the aforementioned block
-    while (block.getParent() != null) {
-      blocks.add(block);
-      block = block.getParent();
-      newInterval = block.getTime();
-      myInterval = (oldInterval - newInterval)/1000; //convert to second
-      totalInterval=totalInterval+myInterval;
-      counter1 = counter1+1;
-    }
+      int counter1 = 1;
+      double oldInterval = 0;
+      double newInterval = 0;
+      double myInterval = 0;
+      double totalInterval = 0;
+      //Update the list of known blocks by adding the parents of the aforementioned block
+      while (block.getParent() != null) {
+        blocks.add(block);
+        oldInterval = block.getTime();
+        block = block.getParent();
+        newInterval = block.getTime();
+        myInterval = (oldInterval - newInterval) / 1000; //convert to second
+        totalInterval = totalInterval + myInterval;
+        counter1 = counter1 + 1;
+      }
 
-    Set<Block> orphans = new HashSet<>();
-    int averageOrphansSize = 0;
-    // Gather all known orphans
-    for (Node node : getSimulatedNodes()) {
-      orphans.addAll(node.getOrphans());
-      averageOrphansSize += node.getOrphans().size();
-    }
-    averageOrphansSize = averageOrphansSize / getSimulatedNodes().size();
+      Set<Block> orphans = new HashSet<>();
+      int averageOrphansSize = 0;
+      // Gather all known orphans
+      for (Node node : getSimulatedNodes()) {
+        orphans.addAll(node.getOrphans());
+        averageOrphansSize += node.getOrphans().size();
+      }
+      averageOrphansSize = averageOrphansSize / getSimulatedNodes().size();
 
-    // Record orphans to the list of all known blocks
-    blocks.addAll(orphans);
+      // Record orphans to the list of all known blocks
+      blocks.addAll(orphans);
 
-    ArrayList<Block> blockList = new ArrayList<>(blocks);
+      ArrayList<Block> blockList = new ArrayList<>(blocks);
 
-    //Sort the blocks first by time, then by hash code
-    blockList.sort((a, b) -> {
-      int order = Long.signum(a.getTime() - b.getTime());
-      if (order != 0) {
+      //Sort the blocks first by time, then by hash code
+      blockList.sort((a, b) -> {
+        int order = Long.signum(a.getTime() - b.getTime());
+        if (order != 0) {
+          return order;
+        }
+        order = System.identityHashCode(a) - System.identityHashCode(b);
         return order;
-      }
-      order = System.identityHashCode(a) - System.identityHashCode(b);
-      return order;
-    });
+      });
 
-    //Log all orphans
-    // TODO move to method and use logger
-    for (Block orphan : orphans) {
-      System.out.println(orphan + ":" + orphan.getHeight());
-    }
-    System.out.println("Average orphan size (simblock) = " + averageOrphansSize);
+      //Log all orphans
+      // TODO move to method and use logger
+      for (Block orphan : orphans) {
+        System.out.println(orphan + ":" + orphan.getHeight());
+      }
+      System.out.println("Average orphan size (simblock) = " + averageOrphansSize);
 
     /*
     Log in format:
@@ -224,23 +227,23 @@ public class Main {
     fork_information: One of "OnChain" and "Orphan". "OnChain" denote block is on Main chain.
     "Orphan" denote block is an orphan block.
      */
-    // TODO move to method and use logger
-    try {
-      FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./blockList.txt")), false);
-      PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+      // TODO move to method and use logger
+      try {
+        FileWriter fw = new FileWriter(new File(OUT_FILE_URI.resolve("./blockList.txt")), false);
+        PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
 
-      for (Block b : blockList) {
-        if (!orphans.contains(b)) {
-          pw.println("OnChain : " + b.getHeight() + " : " + b);
-        } else {
-          pw.println("Orphan : " + b.getHeight() + " : " + b);
+        for (Block b : blockList) {
+          if (!orphans.contains(b)) {
+            pw.println("OnChain : " + b.getHeight() + " : " + b);
+          } else {
+            pw.println("Orphan : " + b.getHeight() + " : " + b);
+          }
         }
-      }
-      pw.close();
+        pw.close();
 
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
 
 //    OUT_JSON_FILE.print("{");
 //    OUT_JSON_FILE.print("\"kind\":\"simulation-end\",");
@@ -252,29 +255,29 @@ public class Main {
 //    OUT_JSON_FILE.print("]");
 //    OUT_JSON_FILE.close();
 
-    long end = System.currentTimeMillis();
-    simulationTime += end - start;
-    // Log simulation time in milliseconds
-    System.out.println("Elapsed time (ms) = " + simulationTime);
+      long end = System.currentTimeMillis();
+      simulationTime += end - start;
+      // Log simulation time in milliseconds
+      System.out.println("Elapsed time (ms) = " + simulationTime);
 
-    Collections.sort(myMedian);
-    int myLength = myMedian.size();
-    totalMedian = (myMedian.get((myLength/2))) + (myMedian.get((myLength/2-1)));
-    totalMedian = totalMedian/2;
-    System.out.println("Median block propagation time: "+((midPropagationTime/END_BLOCK_HEIGHT)/1000));
-    System.out.println("My median: " + (totalMedian/1000));
-    System.out.println("Mean block propagation time: "+((meanBlockPropagationTime/END_BLOCK_HEIGHT)/1000));
+      Collections.sort(myMedian);
+      int myLength = myMedian.size();
+      totalMedian = (myMedian.get((myLength / 2))) + (myMedian.get((myLength / 2 - 1)));
+      totalMedian = totalMedian / 2;
+      System.out.println("Median block propagation time: " + ((midPropagationTime / END_BLOCK_HEIGHT) / 1000));
+      System.out.println("My median: " + (totalMedian / 1000));
+      System.out.println("Mean block propagation time: " + ((meanBlockPropagationTime / END_BLOCK_HEIGHT) / 1000));
 
-    try(FileWriter fw = new FileWriter("E:\\Github\\simblock\\myData.csv", true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter out = new PrintWriter(bw))
-    {
-      out.println(averageOrphansSize + "," + (meanBlockPropagationTime/END_BLOCK_HEIGHT) + "," + (midPropagationTime/END_BLOCK_HEIGHT) + "," + totalMedian
-              + "," + meanBlockPropagationTime + "," + (totalInterval/counter1));
+      try (FileWriter fw = new FileWriter("C:\\Users\\kteo0011\\Documents\\GitHub\\SimBlock-with-Difficulty-Adjustment\\myData(1 churn).csv", true);
+           BufferedWriter bw = new BufferedWriter(fw);
+           PrintWriter out = new PrintWriter(bw)) {
+        out.println(averageOrphansSize + "," + (meanBlockPropagationTime / END_BLOCK_HEIGHT) + "," + (midPropagationTime / END_BLOCK_HEIGHT) + "," + totalMedian
+                + "," + meanBlockPropagationTime + "," + (totalInterval / counter1));
 
-    } catch (IOException e) {
-      //exception handling left as an exercise for the reader
-    }
+      }
+      catch (IOException e) {
+        //exception handling left as an exercise for the reader
+      }
 
   }
 
